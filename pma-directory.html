@@ -1,0 +1,920 @@
+<!DOCTYPE html>
+<html lang="en">
+<head><meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Portfolio Directory â Serenity PM</title>
+  <style>
+    :root {
+      --navy: #1a2744;
+      --navy-light: #243258;
+      --teal: #2a7a6f;
+      --teal-light: #3a9a8d;
+      --gold: #c9a84c;
+      --gold-light: #e0bf6e;
+      --bg: #f4f6f9;
+      --card: #ffffff;
+      --border: #dde2ec;
+      --text: #1e2a3a;
+      --text-muted: #6b7a94;
+      --red: #c0392b;
+      --green: #27ae60;
+      --green-bg: #eafaf1;
+      --yellow-bg: #fef9e7;
+      --blue-bg: #eaf2fb;
+    }
+
+
+    /* ââ Password overlay ââ */
+    #pma-gate {
+      position: fixed; inset: 0; z-index: 9999;
+      background: #1a2744;
+      display: flex; align-items: center; justify-content: center;
+    }
+    #pma-gate .gate-box {
+      background: #fff; border-radius: 10px; padding: 40px 48px;
+      max-width: 380px; width: 90%; text-align: center;
+      box-shadow: 0 8px 32px rgba(0,0,0,.35);
+    }
+    #pma-gate .gate-logo {
+      font-size: 13px; font-weight: 700; letter-spacing: .08em;
+      color: #1a2744; text-transform: uppercase; margin-bottom: 4px;
+    }
+    #pma-gate h2 {
+      font-size: 18px; color: #1a2744; margin-bottom: 24px; font-weight: 600;
+    }
+    #pma-gate input[type=password] {
+      width: 100%; padding: 10px 14px; font-size: 15px;
+      border: 1.5px solid #dde2ec; border-radius: 6px; outline: none;
+      margin-bottom: 12px; transition: border-color .15s;
+    }
+    #pma-gate input[type=password]:focus { border-color: #2a7a6f; }
+    #pma-gate button {
+      width: 100%; padding: 10px; font-size: 15px; font-weight: 600;
+      background: #1a2744; color: #fff; border: none; border-radius: 6px;
+      cursor: pointer; transition: background .15s;
+    }
+    #pma-gate button:hover { background: #2a7a6f; }
+    #pma-gate .gate-err {
+      color: #c0392b; font-size: 13px; margin-top: 10px; min-height: 18px;
+    }
+    #pma-gate .gate-accent { width: 40px; height: 3px; background: #c9a84c; margin: 0 auto 20px; border-radius: 2px; }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      font-size: 14px;
+      line-height: 1.5;
+    }
+
+    header {
+      background: var(--navy);
+      color: white;
+      padding: 20px 32px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      border-bottom: 3px solid var(--gold);
+    }
+
+    header h1 {
+      font-size: 20px;
+      font-weight: 700;
+      letter-spacing: 0.5px;
+    }
+
+    header .subtitle {
+      font-size: 13px;
+      color: rgba(255,255,255,0.65);
+      margin-top: 2px;
+    }
+
+    .header-meta {
+      text-align: right;
+      font-size: 12px;
+      color: rgba(255,255,255,0.55);
+    }
+
+    .header-meta strong {
+      color: var(--gold-light);
+    }
+
+    main {
+      max-width: 1400px;
+      margin: 0 auto;
+      padding: 28px 24px;
+    }
+
+    /* ââ PMA Terms Banner ââ */
+    .terms-banner {
+      background: var(--blue-bg);
+      border: 1px solid #b8d4ef;
+      border-radius: 8px;
+      padding: 16px 20px;
+      margin-bottom: 28px;
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+      gap: 12px;
+    }
+
+    .terms-banner .term-item {
+      display: flex;
+      flex-direction: column;
+    }
+
+    .terms-banner .term-label {
+      font-size: 11px;
+      text-transform: uppercase;
+      letter-spacing: 0.7px;
+      color: var(--text-muted);
+      font-weight: 600;
+    }
+
+    .terms-banner .term-value {
+      font-size: 13px;
+      color: var(--navy);
+      font-weight: 500;
+      margin-top: 2px;
+    }
+
+    .terms-banner .banner-title {
+      grid-column: 1 / -1;
+      font-size: 12px;
+      font-weight: 700;
+      color: #1a5276;
+      text-transform: uppercase;
+      letter-spacing: 0.6px;
+      margin-bottom: 4px;
+    }
+
+    /* ââ Section headers ââ */
+    .section-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin: 32px 0 14px;
+    }
+
+    .section-header h2 {
+      font-size: 16px;
+      font-weight: 700;
+      color: var(--navy);
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .section-header h2 .count-badge {
+      background: var(--navy);
+      color: white;
+      font-size: 11px;
+      font-weight: 600;
+      padding: 2px 8px;
+      border-radius: 10px;
+    }
+
+    /* ââ Portfolio Owner Cards ââ */
+    .owner-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(440px, 1fr));
+      gap: 20px;
+    }
+
+    .owner-card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      overflow: hidden;
+      transition: box-shadow 0.2s;
+    }
+
+    .owner-card:hover {
+      box-shadow: 0 4px 16px rgba(26,39,68,0.10);
+    }
+
+    .card-header {
+      background: var(--navy);
+      color: white;
+      padding: 14px 18px;
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+    }
+
+    .card-header.ky { background: var(--teal); }
+    .card-header.tn { background: var(--navy); }
+    .card-header.ny { background: #5d4e8a; }
+
+    .card-owner-name {
+      font-size: 15px;
+      font-weight: 700;
+    }
+
+    .card-entity {
+      font-size: 12px;
+      color: rgba(255,255,255,0.7);
+      margin-top: 2px;
+    }
+
+    .card-badges {
+      display: flex;
+      flex-direction: column;
+      align-items: flex-end;
+      gap: 4px;
+    }
+
+    .badge {
+      font-size: 10px;
+      font-weight: 700;
+      letter-spacing: 0.6px;
+      padding: 2px 8px;
+      border-radius: 4px;
+      text-transform: uppercase;
+    }
+
+    .badge-state {
+      background: rgba(255,255,255,0.2);
+      color: white;
+    }
+
+    .badge-fee {
+      background: var(--gold);
+      color: #1a1a00;
+    }
+
+    .card-body {
+      padding: 14px 18px;
+    }
+
+    /* ââ Property list ââ */
+    .portfolio-group {
+      margin-bottom: 12px;
+    }
+
+    .portfolio-group-label {
+      font-size: 10px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.6px;
+      color: var(--text-muted);
+      margin-bottom: 5px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .portfolio-group-label a {
+      font-size: 10px;
+      color: var(--teal);
+      text-decoration: none;
+      font-weight: 600;
+    }
+
+    .portfolio-group-label a:hover { text-decoration: underline; }
+
+    .property-list {
+      list-style: none;
+    }
+
+    .property-list li {
+      padding: 3px 0 3px 12px;
+      border-left: 2px solid var(--border);
+      font-size: 13px;
+      color: var(--text);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .property-list li + li {
+      margin-top: 2px;
+    }
+
+    .prop-city {
+      font-size: 11px;
+      color: var(--text-muted);
+      flex-shrink: 0;
+      margin-left: 8px;
+    }
+
+    /* ââ Fee row ââ */
+    .fee-row {
+      border-top: 1px solid var(--border);
+      padding-top: 11px;
+      margin-top: 12px;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 8px;
+    }
+
+    .fee-item {
+      display: flex;
+      flex-direction: column;
+    }
+
+    .fee-label {
+      font-size: 10px;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      color: var(--text-muted);
+      font-weight: 600;
+    }
+
+    .fee-value {
+      font-size: 13px;
+      color: var(--text);
+      font-weight: 500;
+      margin-top: 1px;
+    }
+
+    .fee-detail {
+      font-size: 11px;
+      color: var(--text-muted);
+    }
+
+    /* ââ PMA link ââ */
+    .pma-footer {
+      border-top: 1px solid var(--border);
+      padding-top: 11px;
+      margin-top: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .pma-link {
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      font-size: 12px;
+      color: var(--teal);
+      text-decoration: none;
+      font-weight: 600;
+      padding: 5px 10px;
+      border: 1px solid var(--teal);
+      border-radius: 5px;
+      transition: background 0.15s;
+    }
+
+    .pma-link:hover {
+      background: var(--teal);
+      color: white;
+    }
+
+    .pma-term-note {
+      font-size: 11px;
+      color: var(--text-muted);
+    }
+
+    .pma-term-note strong {
+      color: var(--red);
+    }
+
+    /* ââ Individual owners table ââ */
+    .individual-table-wrap {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      overflow: hidden;
+    }
+
+    table.ind-table {
+      width: 100%;
+      border-collapse: collapse;
+    }
+
+    table.ind-table thead th {
+      background: var(--navy);
+      color: white;
+      font-size: 11px;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      padding: 10px 14px;
+      text-align: left;
+    }
+
+    table.ind-table tbody tr {
+      border-bottom: 1px solid var(--border);
+      transition: background 0.1s;
+    }
+
+    table.ind-table tbody tr:last-child {
+      border-bottom: none;
+    }
+
+    table.ind-table tbody tr:hover {
+      background: #f8f9fb;
+    }
+
+    table.ind-table tbody td {
+      padding: 10px 14px;
+      font-size: 13px;
+      vertical-align: middle;
+    }
+
+    table.ind-table .td-owner { font-weight: 600; }
+
+    table.ind-table .td-addr {
+      color: var(--text-muted);
+      font-size: 12px;
+    }
+
+    table.ind-table .td-fee {
+      font-weight: 600;
+      color: var(--teal);
+      white-space: nowrap;
+    }
+
+    table.ind-table .td-notice {
+      font-size: 12px;
+      color: var(--text-muted);
+    }
+
+    table.ind-table .td-pma a {
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      font-size: 12px;
+      color: var(--teal);
+      text-decoration: none;
+      font-weight: 600;
+    }
+
+    table.ind-table .td-pma a:hover { text-decoration: underline; }
+
+    .unit-count {
+      font-size: 11px;
+      color: var(--text-muted);
+      font-style: italic;
+    }
+
+    .row-inactive {
+      opacity: 0.6;
+      background: #fafafa;
+    }
+
+    .row-inactive:hover {
+      background: #f5f5f5 !important;
+    }
+
+    .inactive-badge {
+      display: inline-block;
+      background: #e74c3c;
+      color: white;
+      font-size: 9px;
+      font-weight: 700;
+      letter-spacing: .05em;
+      padding: 2px 5px;
+      border-radius: 3px;
+      margin-right: 5px;
+      vertical-align: middle;
+    }
+
+        .see-pma {
+      font-size: 11px;
+      color: var(--text-muted);
+      font-style: italic;
+    }
+
+    /* ââ Search/filter ââ */
+    .search-bar {
+      display: flex;
+      gap: 10px;
+      margin-bottom: 20px;
+    }
+
+    .search-bar input {
+      flex: 1;
+      max-width: 360px;
+      padding: 8px 12px;
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      font-size: 13px;
+      background: white;
+      color: var(--text);
+    }
+
+    .search-bar input:focus {
+      outline: none;
+      border-color: var(--teal);
+    }
+
+    /* ââ Footer ââ */
+    footer {
+      text-align: center;
+      padding: 24px;
+      font-size: 12px;
+      color: var(--text-muted);
+      border-top: 1px solid var(--border);
+      margin-top: 40px;
+    }
+
+    footer a { color: var(--teal); text-decoration: none; }
+    footer a:hover { text-decoration: underline; }
+
+    @media (max-width: 600px) {
+      .owner-grid { grid-template-columns: 1fr; }
+      header { flex-direction: column; gap: 8px; }
+      .header-meta { text-align: left; }
+    }
+  
+    .managed-by-label {
+      font-size: 12px;
+      font-weight: 400;
+      color: var(--text-muted);
+      margin-left: 8px;
+    }
+    .section-subheader {
+      padding: 8px 0 4px 0;
+      margin: 8px 0 12px 0;
+    }
+    .section-subheader h3 {
+      font-size: 14px;
+      font-weight: 600;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+  </style>
+</head>
+<body>
+
+<!-- Password gate -->
+<div id="pma-gate">
+  <div class="gate-box">
+    <div class="gate-logo">Serenity Property Management</div>
+    <div class="gate-accent"></div>
+    <h2>Internal Access Only</h2>
+    <input type="password" id="pma-pw" placeholder="Enter password" autocomplete="current-password">
+    <button onclick="pmaAuth()">Unlock</button>
+    <div class="gate-err" id="pma-err"></div>
+  </div>
+</div>
+
+<header>
+  <div>
+    <h1>Portfolio &amp; Owner Directory</h1>
+    <div class="subtitle">Serenity Property Management LLC â Internal Reference</div>
+  </div>
+  <div class="header-meta">
+    <div>Last updated: <strong>March 2026</strong></div>
+    <div>Source: <a href="https://github.com/claudeamitkalra-commits/serenity-re-website/blob/main/portfolio-data.json" target="_blank" style="color:var(--gold-light)">portfolio-data.json</a></div>
+  </div>
+</header>
+
+<main>
+
+  <!-- PMA Standard Terms Banner -->
+  <div class="terms-banner">
+    <div class="banner-title">ð Standard PMA Terms (all owners)</div>
+    <div class="term-item">
+      <span class="term-label">Term Length</span>
+      <span class="term-value">1 year from execution date</span>
+    </div>
+    <div class="term-item">
+      <span class="term-label">Auto-Renewal</span>
+      <span class="term-value">Annually from original execution date</span>
+    </div>
+    <div class="term-item">
+      <span class="term-label">Notice to Terminate</span>
+      <span class="term-value" style="color:var(--red)">30 days written notice before renewal date</span>
+    </div>
+    <div class="term-item">
+      <span class="term-label">Early Termination Fee</span>
+      <span class="term-value">3 months fees or remaining balance (greater)</span>
+    </div>
+    <div class="term-item">
+      <span class="term-label">Lease-Up Fee</span>
+      <span class="term-value">50% of first month's rent (per door)</span>
+    </div>
+    <div class="term-item">
+      <span class="term-label">Late Fee Split</span>
+      <span class="term-value">50% to managing entity</span>
+    </div>
+  </div>
+
+  <!-- Search bar -->
+  <div class="search-bar">
+    <input type="text" id="searchInput" placeholder="Search owners, properties, citiesâ¦" oninput="filterAll()">
+  </div>
+
+  <!-- KY Owners -->
+  <div class="section-header">
+    <h2>KY Owners <span class="managed-by-label">Managed by Jason Billy / XJM</span></h2>
+  </div>
+
+  <div class="individual-table-wrap" id="kyTable">
+    <table class="ind-table">
+      <thead>
+        <tr>
+          <th>Owner</th>
+          <th>Property / Address</th>
+          <th>XJM</th>
+          <th>Serenity</th>
+          <th>Notice Period</th>
+          <th>PMA</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr data-search="pptclex frankfort lexington ky">
+          <td class="td-owner">PPTCLEX</td>
+          <td class="td-addr">122 Rolling Acres Dr (Frankfort, KY), 1844 &amp; 1854 Augusta Dr (Lexington, KY) &mdash; 3 units</td>
+          <td class="td-fee">3.5%</td>
+          <td class="td-fee">2.0%</td>
+          <td class="td-notice">30 days</td>
+          <td class="td-pma">📁 Folder</td>
+        </tr>
+        <tr data-search="bxsci96-ky lexington ky">
+          <td class="td-owner">BXSCI96-KY</td>
+          <td class="td-addr">185 &amp; 193 Landings Dr, 201 S Broadway St, 321 Given Ave &mdash; Lexington, KY (4 units)</td>
+          <td class="td-fee">3.5%</td>
+          <td class="td-fee">2.0%</td>
+          <td class="td-notice">30 days</td>
+          <td class="td-pma">📁 Folder</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+
+  <!-- TN Owners -->
+
+  <div class="section-header">
+    <h2>TN Owners <span class="managed-by-label">Managed by Ashley Smith / AshNash</span></h2>
+  </div>
+  
+
+  <div class="individual-table-wrap" id="individualTable">
+    <table class="ind-table">
+      <thead>
+        <tr>
+          <th>Owner</th>
+          <th>Property / Address</th>
+          <th>AshNash</th>
+          <th>Serenity</th>
+          <th>Notice Period</th>
+          <th>PMA</th>
+        </tr>
+      </thead>
+      <tbody>
+        <!-- ── ENTITY OWNERS ── -->
+        <tr data-search="bxsci96-tn nashville tn">
+          <td class="td-owner">BXSCI96-TN</td>
+          <td class="td-addr">203 N Main St (A/B), 325 Harris St (A/B), 2200 Crestline (A/B), 4329 Enchanted Circle &mdash; Nashville, TN <span class="unit-count">(8 units)</span></td>
+          <td class="td-fee">3.5%</td>
+          <td class="td-fee">2.0%</td>
+          <td class="td-notice">30 days</td>
+          <td class="td-pma">&mdash;</td>
+        </tr>
+        <tr data-search="pptc nashville tn">
+          <td class="td-owner">PPTC</td>
+          <td class="td-addr">1030 Drummond Dr (A/B), 1507 Golf St (1/Lower), 3033 Vista Valley Ct (A/B), 3202 Doak Ave, 3204 Doak Ave, 3901 Kingswood Ave (Front/Rear) &mdash; Nashville, TN <span class="unit-count">(10 units)</span></td>
+          <td class="td-fee">3.5%</td>
+          <td class="td-fee">2.0%</td>
+          <td class="td-notice">30 days</td>
+          <td class="td-pma">&mdash;</td>
+        </tr>
+
+        <!-- ── ACTIVE OWNERS ── -->
+        
+
+        <tr data-search="ashleigh suarez stewart allison neal colt nevada nashville tn">
+          <td class="td-owner">Ashleigh Suarez</td>
+          <td class="td-addr">1709/1717 Stewart Pl, 1712/1714/1806 Allison Pl, 1712 Martin St, 1719/1801 Neal Ter, 250/252 Colt Dr, 3912 Nevada Ave &mdash; Nashville TN <span class="unit-count">(11 units)</span></td>
+          <td class="td-fee">5%</td>
+          <td class="td-fee">2%</td>
+          <td class="td-notice">30 days &middot; auto-renews</td>
+          <td class="td-pma"><a href="https://drive.google.com/drive/folders/10Dm36Y_o9glMooTB4Qaq2pbWQeufb2qD" target="_blank">&#x1F4C1; Folder</a></td>
+        </tr>
+
+        <tr data-search="david julie smith cobblestone goodlettsville tn">
+          <td class="td-owner">David &amp; Julie Smith</td>
+          <td class="td-addr">115, 119, 141 Cobblestone Place Drive, Goodlettsville TN</td>
+          <td class="td-fee">6%</td>
+          <td class="td-fee">2%</td>
+          <td class="td-notice">30 days &middot; auto-renews</td>
+          <td class="td-pma"><a href="https://drive.google.com/drive/folders/1oyaqymRs6yIFO-JU7gkLBckbOfNOQIBT" target="_blank">&#x1F4C1; Folder</a></td>
+        </tr>
+
+        <tr data-search="elpepee solutions broadmoor riverside nashville tn">
+          <td class="td-owner">ElePepe Solutions LLC</td>
+          <td class="td-addr">1009, 1011, 1013 Broadmoor Drive + 1807 Riverside Drive &mdash; Nashville TN <span class="unit-count">(4 units)</span></td>
+          <td class="td-fee">3.5%</td>
+          <td class="td-fee">2%</td>
+          <td class="td-notice">30 days &middot; auto-renews</td>
+          <td class="td-pma"><a href="https://drive.google.com/drive/folders/1fc3C8ouwVDotz8xLIZ8dJg_oyTi7gHrk" target="_blank">&#x1F4C1; Folder</a></td>
+        </tr>
+
+        <tr data-search="elizabeth burrows 5th 7th ewing bullock richardson douglas treutland queen berry nashville tn">
+          <td class="td-owner">Elizabeth Burrows</td>
+          <td class="td-addr">9 Richardson Ave, 1117 N 5th St, 1212/1221 N 7th St, 1301 Ewing Creek Dr, 1826 11th Ave N, 203 Treutland Ave, 206 Queen Ave, 210 Berry St, 2716 Bullock Ave, 918 Douglas Ave &mdash; Nashville TN <span class="unit-count">(11 active units)</span></td>
+          <td class="td-fee">8%</td>
+          <td class="td-fee">2%</td>
+          <td class="td-notice">30 days &middot; auto-renews</td>
+          <td class="td-pma"><a href="https://drive.google.com/drive/folders/1ASRKV0P_ehxdjFBzXkbXeNQ93QXV-ubQ" target="_blank">&#x1F4C1; Folder</a></td>
+        </tr>        
+
+
+        <tr data-search="grace stephanie derderian 31st nashville tn">
+          <td class="td-owner">Grace &amp; Stephanie Derderian</td>
+          <td class="td-addr">116 31st Avenue North, Nashville TN</td>
+          <td class="td-fee">6%</td>
+          <td class="td-fee">2%</td>
+          <td class="td-notice">30 days &middot; auto-renews</td>
+          <td class="td-pma"><a href="https://drive.google.com/drive/folders/1CPjAezGkxdAHjNSnbt5NvNySW7VUSJnx" target="_blank">&#x1F4C1; Folder</a></td>
+        </tr>
+
+        <tr data-search="hankton enterprise lashondra 37th nashville tn">
+          <td class="td-owner">HANKTON ENTERPRISE LLC</td>
+          <td class="td-addr">440 37th Avenue North, Nashville TN</td>
+          <td class="td-fee">6%</td>
+          <td class="td-fee">2%</td>
+          <td class="td-notice">30 days &middot; auto-renews</td>
+          <td class="td-pma"><a href="https://drive.google.com/drive/folders/1J0gyMPaXu8fXaM6tUo8m57E_ALusfswM" target="_blank">&#x1F4C1; Folder</a></td>
+        </tr>
+
+        <tr data-search="laura donnell 3rd avenue nashville tn">
+          <td class="td-owner">Laura Donnell</td>
+          <td class="td-addr">817 3rd Avenue North, Nashville TN</td>
+          <td class="td-fee">7%</td>
+          <td class="td-fee">2%</td>
+          <td class="td-notice">30 days &middot; auto-renews</td>
+          <td class="td-pma"><a href="https://drive.google.com/drive/folders/12ohZe2415YkSJBr63rLQpslhLy_cW_sv" target="_blank">&#x1F4C1; Folder</a></td>
+        </tr>
+
+        <tr data-search="matt elise albertolle lutie nashville tn">
+          <td class="td-owner">Matt &amp; Elise Albertolle</td>
+          <td class="td-addr">207 Lutie Street, Nashville TN</td>
+          <td class="td-fee">10%</td>
+          <td class="td-fee">2%</td>
+          <td class="td-notice">30 days &middot; auto-renews</td>
+          <td class="td-pma"><a href="https://drive.google.com/drive/folders/1v-Gu2QIRIV7MyPbOQjPrWIPpWR1N_BMl" target="_blank">&#x1F4C1; Folder</a></td>
+        </tr>
+
+        <tr data-search="michael mclean ridgecrest petway jones barbara chadwell linden crockett nashville hendersonville hermitage madison tn">
+          <td class="td-owner">Michael McLean</td>
+          <td class="td-addr">103 Ridgecrest (Hendersonville), 1032 Petway, 2605 Jones, 403 Barbara Dr (Madison), 419 Chadwell Dr, 743/745 Linden Green Dr (Hermitage), 807 Crockett St &mdash; TN <span class="unit-count">(8 units)</span></td>
+          <td class="td-fee">3.5%</td>
+          <td class="td-fee">2%</td>
+          <td class="td-notice">30 days &middot; auto-renews</td>
+          <td class="td-pma"><a href="https://drive.google.com/drive/folders/16ITlhwhqxXsHGu4AlrUde2stTrKm0s-x" target="_blank">&#x1F4C1; Folder</a></td>
+        </tr>
+
+                <tr data-search="ara derderian 510 gray street nashville tn inactive">
+          <td class="td-owner">INACTIVE Ara Derderian</td>
+          <td class="td-addr">510 Gray St, Nashville TN &mdash; no longer managed</td>
+          <td class="td-fee">&mdash;</td>
+          <td class="td-fee">&mdash;</td>
+          <td class="td-notice">&mdash;</td>
+          <td class="td-pma">&mdash;</td>
+        </tr>
+<tr data-search="samuel anabel garner 40th nashville tn">
+          <td class="td-owner">Samuel &amp; Anabel Garner</td>
+          <td class="td-addr">1041 40th Avenue North, Nashville TN</td>
+          <td class="td-fee">6%</td>
+          <td class="td-fee">2%</td>
+          <td class="td-notice">30 days &middot; auto-renews</td>
+          <td class="td-pma"><a href="https://drive.google.com/drive/folders/1Sl6xqR3RnNx3WZSgWa5m7L07feIKgs4j" target="_blank">&#x1F4C1; Folder</a></td>
+        </tr>
+
+        <!-- ── INACTIVE / NO LONGER MANAGED ── -->
+        <tr class="row-inactive" data-search="sam palladio scott boscobel nashville tn inactive">
+          <td class="td-owner"><span class="inactive-badge">INACTIVE</span> Sam Scott / Palladio</td>
+          <td class="td-addr"><span class="see-pma">1402 Boscobel St, Nashville TN &mdash; not in Buildium</span></td>
+          <td class="td-fee" style="color:var(--text-muted)">&mdash;</td>
+          <td class="td-fee" style="color:var(--text-muted)">&mdash;</td>
+          <td class="td-notice" style="color:var(--text-muted)">&mdash;</td>
+          <td class="td-pma"><a href="https://drive.google.com/drive/folders/1q5tlXrj_qpgyVKzir2NJTP3hVXIz-sk1" target="_blank">&#x1F4C1; Folder</a></td>
+        </tr>
+
+        <tr class="row-inactive" data-search="charles yum nashville tn inactive">
+          <td class="td-owner"><span class="inactive-badge">INACTIVE</span> Charles Yum</td>
+          <td class="td-addr"><span class="see-pma">Not found in Buildium &mdash; 3 units per PMA</span></td>
+          <td class="td-fee" style="color:var(--text-muted)">&mdash;</td>
+          <td class="td-fee" style="color:var(--text-muted)">&mdash;</td>
+          <td class="td-notice" style="color:var(--text-muted)">&mdash;</td>
+          <td class="td-pma"><a href="https://drive.google.com/drive/folders/1s-bTTVbOvJBqhAMsk6YeBBcVxHSe1dzp" target="_blank">&#x1F4C1; Folder</a></td>
+        </tr>
+
+        <tr class="row-inactive" data-search="jessica wright nashville tn inactive">
+          <td class="td-owner"><span class="inactive-badge">INACTIVE</span> Jessica Wright</td>
+          <td class="td-addr"><span class="see-pma">Not found in Buildium &mdash; 1 unit per PMA</span></td>
+          <td class="td-fee" style="color:var(--text-muted)">&mdash;</td>
+          <td class="td-fee" style="color:var(--text-muted)">&mdash;</td>
+          <td class="td-notice" style="color:var(--text-muted)">&mdash;</td>
+          <td class="td-pma"><a href="https://drive.google.com/drive/folders/1-kljJoCUNaRQxyThrP5ilMG0DkQt2dfR" target="_blank">&#x1F4C1; Folder</a></td>
+        </tr>
+
+        <tr class="row-inactive" data-search="taylor guarneri nashville tn inactive">
+          <td class="td-owner"><span class="inactive-badge">INACTIVE</span> Taylor Guarneri</td>
+          <td class="td-addr"><span class="see-pma">Not found in Buildium</span></td>
+          <td class="td-fee" style="color:var(--text-muted)">&mdash;</td>
+          <td class="td-fee" style="color:var(--text-muted)">&mdash;</td>
+          <td class="td-notice" style="color:var(--text-muted)">&mdash;</td>
+          <td class="td-pma"><a href="https://drive.google.com/drive/folders/1Lz4H0EPn9xvoNo2Sfqn4qimGdyN2eVJM" target="_blank">&#x1F4C1; Folder</a></td>
+        </tr>
+
+      </tbody>
+    </table>
+  </div>
+
+
+  <!-- Radhe Realty -->
+  <div class="section-header">
+    <h2>Radhe Realty LLC <span class="managed-by-label">Clearing / Reimbursement Entity</span></h2>
+  </div>
+
+  <div class="owner-grid" id="radheGrid">
+    <div class="owner-card" data-search="radhe realty new york ny woodside skillman">
+      <div class="card-header ny">
+        <div>
+          <div class="card-owner-name">Radhe Realty LLC</div>
+          <div class="card-entity">Clearing / Reimbursement Entity</div>
+        </div>
+        <div class="card-badges">
+          <span class="badge badge-state">NY</span>
+        </div>
+      </div>
+      <div class="card-body">
+        <div class="portfolio-group">
+          <div class="portfolio-group-label">Radhe-NY (1 unit)</div>
+          <ul class="property-list">
+            <li>5217 Skillman Avenue <span class="prop-city">Woodside, NY</span></li>
+          </ul>
+        </div>
+        <div class="fee-row">
+          <div class="fee-item">
+            <span class="fee-label">Monthly Mgmt Fee</span>
+            <span class="fee-value">5.5% gross rents</span>
+            <span class="fee-detail">Buildium Global &mdash; confirmed 2026-03-22</span>
+          </div>
+          <div class="fee-item">
+            <span class="fee-label">Role</span>
+            <span class="fee-value">Reimbursable entity</span>
+            <span class="fee-detail">Clearing / expense entity</span>
+          </div>
+        </div>
+        <div class="pma-footer">
+          <span class="pma-term-note" style="color:var(--text-muted); font-style:italic">PMA on file &mdash; contact Amit for access</span>
+        </div>
+      </div>
+    </div>
+  </div><!-- /radheGrid -->
+
+</main>
+
+<footer>
+  Internal use only â Serenity Property Management LLC Â·
+  Data source: <a href="https://github.com/claudeamitkalra-commits/serenity-re-website/blob/main/portfolio-data.json">portfolio-data.json</a> Â·
+  <a href="/serenityops.html">â Ops Dashboard</a>
+</footer>
+
+<script>
+  function filterAll() {
+    const q = document.getElementById('searchInput').value.toLowerCase().trim();
+
+    // Filter portfolio cards
+    document.querySelectorAll('#portfolioGrid .owner-card').forEach(card => {
+      const text = (card.getAttribute('data-search') || '') + ' ' + card.innerText.toLowerCase();
+      card.style.display = (!q || text.includes(q)) ? '' : 'none';
+    });
+
+    // Filter individual table rows
+    document.querySelectorAll('#individualTable tbody tr').forEach(row => {
+      const text = (row.getAttribute('data-search') || '') + ' ' + row.innerText.toLowerCase();
+      row.style.display = (!q || text.includes(q)) ? '' : 'none';
+    });
+  }
+</script>
+
+
+<script>
+  (function() {
+    var KEY = 'pma_auth_v1';
+    var gate = document.getElementById('pma-gate');
+    var pw = document.getElementById('pma-pw');
+    function unlock() { gate.style.display = 'none'; }
+    try { if (localStorage.getItem(KEY) === '1') { unlock(); return; } } catch(e) {}
+    pw.addEventListener('keydown', function(e) { if (e.key === 'Enter') pmaAuth(); });
+    setTimeout(function() { pw.focus(); }, 50);
+  })();
+  function pmaAuth() {
+    var val = document.getElementById('pma-pw').value;
+    var err = document.getElementById('pma-err');
+    if (val === 'serenity2026') {
+      try { localStorage.setItem('pma_auth_v1', '1'); } catch(e) {}
+      document.getElementById('pma-gate').style.display = 'none';
+      err.textContent = '';
+    } else {
+      err.textContent = 'Incorrect password. Try again.';
+      document.getElementById('pma-pw').value = '';
+      document.getElementById('pma-pw').focus();
+    }
+  }
+</script>
+</body>
+<script>'undefined'=== typeof _trfq || (window._trfq = []);'undefined'=== typeof _trfd && (window._trfd=[]),_trfd.push({'tccl.baseHost':'secureserver.net'},{'ap':'cpsh-oh'},{'server':'p3plzcpnl504824'},{'dcenter':'p3'},{'cp_id':'9959745'},{'cp_cl':'8'}) // Monitoring performance to make your website faster. If you want to opt-out, please contact web hosting support.</script><script src='https://img1.wsimg.com/traffic-assets/js/tccl.min.js'></script></html>

@@ -1,0 +1,168 @@
+/* ============================================
+   Serenity Real Estate PM - "Bare Bones" Style
+   Intentionally old-school. Deliberately simple.
+   ============================================ */
+
+/* Reset */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: Georgia, "Times New Roman", Times, serif;
+    font-size: 15px;
+    line-height: 1.7;
+    color: #333;
+    background-color: #fff;
+    max-width: 800px;
+    margin: 0 auto;
+    padding: 0 12px;
+}
+
+/* Links - old school blue */
+a {
+    color: #0000EE;
+    text-decoration: underline;
+}
+
+a:visited {
+    color: #551A8B;
+}
+
+a:hover {
+    color: #CC0000;
+}
+
+/* Headings */
+h1 {
+    font-family: "Courier New", Courier, monospace;
+    color: #333;
+}
+
+h2 {
+    font-family: Georgia, serif;
+    font-size: 20px;
+    color: #333;
+    margin-bottom: 12px;
+    border-bottom: 1px solid #999;
+    padding-bottom: 4px;
+}
+
+/* Main content area */
+.main-content {
+    padding: 8px 0;
+}
+
+.section {
+    padding: 16px 0;
+}
+
+/* Paragraphs */
+p {
+    margin-bottom: 14px;
+    text-align: left;
+}
+
+/* Lists */
+ul {
+    margin: 10px 0 14px 28px;
+}
+
+li {
+    margin-bottom: 6px;
+}
+
+/* Services table - old school */
+.services-table {
+    border-collapse: collapse;
+    font-size: 14px;
+    margin: 12px 0;
+}
+
+.services-table td {
+    border: 1px solid #999;
+    vertical-align: top;
+}
+
+/* Contact table */
+.contact-table td {
+    vertical-align: top;
+    padding: 4px 8px;
+}
+
+/* Contact form - bare bones */
+.contact-form input[type="text"],
+.contact-form input[type="email"],
+.contact-form input[type="tel"],
+.contact-form textarea {
+    font-family: Georgia, serif;
+    font-size: 14px;
+    border: 1px solid #999;
+    padding: 4px 6px;
+    background-color: #fffff0;
+}
+
+.contact-form textarea {
+    resize: vertical;
+}
+
+.submit-btn {
+    font-family: Georgia, serif;
+    font-size: 14px;
+    background-color: #f5f5dc;
+    border: 2px outset #ccc;
+    padding: 6px 20px;
+    cursor: pointer;
+    color: #333;
+}
+
+.submit-btn:hover {
+    background-color: #e8e8c8;
+}
+
+/* HR styling */
+hr {
+    margin: 4px 0;
+}
+
+/* Responsive - keep it simple */
+@media (max-width: 600px) {
+    body {
+        font-size: 14px;
+        padding: 0 8px;
+    }
+
+    h1 {
+        font-size: 18px !important;
+    }
+
+    h2 {
+        font-size: 17px;
+    }
+
+    .services-table td {
+        display: block;
+        width: 100% !important;
+    }
+
+    .services-table tr {
+        display: block;
+        margin-bottom: 8px;
+    }
+
+    .contact-form input[type="text"],
+    .contact-form input[type="email"],
+    .contact-form input[type="tel"],
+    .contact-form textarea {
+        width: 100%;
+    }
+
+    /* Stack nav */
+    table td[align="right"] {
+        display: block;
+        text-align: left !important;
+        padding-top: 4px;
+    }
+}

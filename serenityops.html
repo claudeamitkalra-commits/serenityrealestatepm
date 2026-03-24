@@ -1,0 +1,956 @@
+<!DOCTYPE html>
+<html lang="en"><head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Serenity PM — Bookkeeping Ops</title>
+<style>
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{font-family:'Segoe UI',Arial,sans-serif;font-size:13px;background:#f4f6f8;color:#222}
+  a{color:#2a7ae2;text-decoration:none}
+  a:hover{text-decoration:underline}
+
+  /* TOPBAR */
+  .topbar{background:#1a2332;color:#cdd6e0;padding:0 20px;display:flex;align-items:center;gap:24px;height:42px;position:sticky;top:0;z-index:100;flex-wrap:wrap}
+  .topbar-brand{font-weight:700;color:#fff;font-size:14px;white-space:nowrap}
+  .topbar-meta{font-size:11px;color:#8a9bae;white-space:nowrap}
+  .topbar-nav{display:flex;gap:4px;margin-left:auto}
+  .topbar-nav a{color:#9ab0c4;font-size:12px;padding:4px 10px;border-radius:4px;transition:background .15s}
+  .topbar-nav a:hover,.topbar-nav a.active{background:#2a3c52;color:#fff;text-decoration:none}
+
+  /* PAGE LAYOUT */
+  .page{max-width:1280px;margin:0 auto;padding:20px 16px 60px}
+  h2{font-size:15px;font-weight:700;color:#1a2332;margin-bottom:12px;padding-bottom:6px;border-bottom:2px solid #e2e8f0}
+  h3{font-size:13px;font-weight:700;color:#2d3a4a;margin-bottom:8px}
+  section{margin-bottom:32px}
+
+  /* STAT TILES */
+  .tiles{display:flex;flex-wrap:wrap;gap:12px;margin-bottom:24px}
+  .tile{background:#fff;border-radius:8px;padding:14px 18px;min-width:140px;flex:1;border-left:4px solid #ccc;box-shadow:0 1px 4px rgba(0,0,0,.06)}
+  .tile.green{border-color:#22c55e}
+  .tile.orange{border-color:#f59e0b}
+  .tile.red{border-color:#ef4444}
+  .tile.blue{border-color:#3b82f6}
+  .tile.gray{border-color:#94a3b8}
+  .tile-val{font-size:22px;font-weight:700;color:#1a2332}
+  .tile-lbl{font-size:11px;color:#64748b;margin-top:2px}
+  .tile-sub{font-size:11px;color:#94a3b8;margin-top:4px}
+
+  /* TABLES */
+  table{width:100%;border-collapse:collapse;background:#fff;border-radius:8px;overflow:hidden;box-shadow:0 1px 4px rgba(0,0,0,.06);margin-bottom:8px}
+  th{background:#f1f5f9;text-align:left;padding:8px 12px;font-size:11px;font-weight:700;color:#475569;text-transform:uppercase;letter-spacing:.04em;border-bottom:1px solid #e2e8f0}
+  td{padding:8px 12px;border-bottom:1px solid #f1f5f9;vertical-align:top;line-height:1.5}
+  tr:last-child td{border-bottom:none}
+  tr:hover td{background:#f8fafc}
+
+  /* BADGES */
+  .badge{display:inline-block;padding:2px 8px;border-radius:20px;font-size:10px;font-weight:700;white-space:nowrap}
+  .badge.live{background:#dcfce7;color:#15803d}
+  .badge.ready{background:#fef3c7;color:#92400e}
+  .badge.partial{background:#dbeafe;color:#1d4ed8}
+  .badge.open{background:#fee2e2;color:#b91c1c}
+  .badge.none{background:#f1f5f9;color:#64748b}
+  .badge.finetuning{background:#ede9fe;color:#6d28d9}
+  .badge.auto{background:#d1fae5;color:#065f46;font-size:9px}
+
+  /* SWIM LANE */
+  .swimlane-wrap{overflow-x:auto;background:#fff;border-radius:8px;box-shadow:0 1px 4px rgba(0,0,0,.06);padding:0}
+  .sl-table{border-collapse:collapse;min-width:900px;width:100%}
+  .sl-lane-hdr{background:#1a2332;color:#fff;font-size:11px;font-weight:700;padding:8px 14px;width:120px;white-space:nowrap;vertical-align:top}
+  .sl-cell{border:1px solid #e2e8f0;padding:8px 10px;vertical-align:top;font-size:11px;min-width:110px}
+  .sl-step{background:#3b82f6;color:#fff;border-radius:5px;padding:4px 8px;font-size:10px;font-weight:600;margin-bottom:4px;display:block;text-align:center}
+  .sl-step.green{background:#22c55e}
+  .sl-step.orange{background:#f59e0b;color:#1a2332}
+  .sl-step.red{background:#ef4444}
+  .sl-step.gray{background:#94a3b8}
+  .sl-step.purple{background:#8b5cf6}
+  .sl-col-hdr{background:#f1f5f9;text-align:center;font-size:10px;font-weight:700;color:#475569;padding:6px;border:1px solid #e2e8f0;text-transform:uppercase;letter-spacing:.04em}
+  .sl-phase{background:#1e3a5f;color:#7eb3f0;font-size:10px;font-weight:700;padding:5px 10px;text-transform:uppercase;letter-spacing:.06em;text-align:center}
+
+  /* EFFORT BARS */
+  .effort-bar-wrap{background:#e2e8f0;border-radius:4px;height:8px;margin-top:4px}
+  .effort-bar{height:8px;border-radius:4px;background:#3b82f6}
+  .effort-bar.after{background:#22c55e}
+
+  /* GAPS CALLOUT */
+  .gap-card{background:#fff;border-radius:8px;border-left:4px solid #f59e0b;padding:12px 16px;margin-bottom:8px;box-shadow:0 1px 3px rgba(0,0,0,.05)}
+  .gap-card.red{border-color:#ef4444}
+  .gap-card.blue{border-color:#3b82f6}
+  .gap-title{font-weight:700;font-size:12px;color:#1a2332;margin-bottom:4px}
+  .gap-body{font-size:12px;color:#475569;line-height:1.6}
+
+  /* SKILL CARDS */
+  .skill-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:12px}
+  .skill-card{background:#fff;border-radius:8px;padding:14px 16px;box-shadow:0 1px 4px rgba(0,0,0,.06);border-top:3px solid #ccc}
+  .skill-card.live{border-color:#22c55e}
+  .skill-card.needed{border-color:#f59e0b}
+  .skill-card.blocked{border-color:#ef4444}
+  .skill-name{font-weight:700;font-size:13px;color:#1a2332;margin-bottom:4px}
+  .skill-covers{font-size:11px;color:#475569;line-height:1.6}
+  .skill-status{font-size:11px;font-weight:700;margin-top:8px}
+  .skill-status.live{color:#15803d}
+  .skill-status.needed{color:#92400e}
+  .skill-status.blocked{color:#b91c1c}
+
+  /* IO TABLE */
+  .io-wrap{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+  @media(max-width:700px){.io-wrap{grid-template-columns:1fr}}
+  .io-card{background:#fff;border-radius:8px;padding:12px 14px;box-shadow:0 1px 4px rgba(0,0,0,.06)}
+  .io-hdr{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:#64748b;margin-bottom:8px}
+  .io-row{display:flex;justify-content:space-between;align-items:flex-start;padding:5px 0;border-bottom:1px solid #f1f5f9;font-size:11px;gap:8px}
+  .io-row:last-child{border-bottom:none}
+  .io-name{color:#1a2332;font-weight:600}
+  .io-src{color:#64748b;text-align:right;max-width:55%}
+  .can-fetch{color:#15803d;font-size:10px;font-weight:700}
+  .cannot-fetch{color:#dc2626;font-size:10px;font-weight:700}
+</style>
+</head>
+<body>
+
+<div class="topbar">
+  <span class="topbar-brand">Serenity PM</span>
+  <span class="topbar-meta">61 properties · 121 units · 16 owner groups · TN + KY</span>
+  <span class="topbar-meta">Today: <span id="live-date">—</span></span>
+  <nav class="topbar-nav">
+    <a href="#status">Status</a>
+    <a href="#processes">Processes</a>
+    <a href="#swimlanes">Swim Lanes</a>
+    <a href="#skills">Skills</a>
+    <a href="#io">Inputs / Outputs</a>
+    <a href="#effort">Work Effort</a>
+    <a href="#owners">Owners</a>
+    <a href="#gaps">Gaps</a>
+    <a href="https://serenityrealestatepm.com/elmwoodops.html">Goddard ↗</a>
+    <a href="https://serenityrealestatepm.com/pma-directory.html">PMA Directory ↗</a>
+  </nav>
+</div>
+
+<div class="page">
+
+  <!-- STATUS TILES -->
+  <a id="status"></a>
+  <div class="tiles">
+    <div class="tile green">
+      <div class="tile-val">10</div>
+      <div class="tile-lbl">Skills Live</div>
+      <div class="tile-sub">bookkeeping, lha-rec, bank-rec, vacancy-report, utility-entry, reserve-mgmt, website-deploy, nsf, income-calc</div>
+    </div>
+    <div class="tile green">
+      <div class="tile-val">0</div>
+      <div class="tile-lbl">Skills Needed</div>
+      <div class="tile-sub">roadmap complete</div>
+    </div>
+    <div class="tile blue">
+      <div class="tile-val">14</div>
+      <div class="tile-lbl">Defined Tasks</div>
+      <div class="tile-sub">in SKILL.md</div>
+    </div>
+    <div class="tile orange">
+      <div class="tile-val">3</div>
+      <div class="tile-lbl">Fine-Tuning</div>
+      <div class="tile-sub">narratives, draws, payout not live</div>
+    </div>
+    <div class="tile red">
+      <div class="tile-val">0</div>
+      <div class="tile-lbl">Undocumented</div>
+      <div class="tile-sub">all processes have a skill or SOP</div>
+    </div>
+    <div class="tile gray">
+      <div class="tile-val">~18 hrs</div>
+      <div class="tile-lbl">Monthly Manual Effort</div>
+      <div class="tile-sub">target: ~3–4 hrs automated</div>
+    </div>
+  </div>
+
+  <!-- PROCESS INVENTORY -->
+  <a id="processes"></a>
+  <section>
+    <h2>Process Inventory</h2>
+    <table>
+      <thead>
+        <tr>
+          <th>#</th>
+          <th>Process</th>
+          <th>Timing</th>
+          <th>Skill</th>
+          <th>SOP in SKILL.md</th>
+          <th>Spreadsheet</th>
+          <th>Status</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>7B</td>
+          <td><strong>Communications Review</strong><br><span style="color:#64748b">Scan Buildium email threads for vacancy/delinquency/legal flags</span></td>
+          <td>3× / month (1st, 10th, 20th)</td>
+          <td><span class="badge live">serenity-pm-bookkeeping</span></td>
+          <td><span class="badge live">Defined</span></td>
+          <td><span class="badge none">None</span></td>
+          <td><span class="badge live">Live</span></td>
+        </tr>
+        <tr>
+          <td>8</td>
+          <td><strong>Vacancy &amp; Lease Report</strong><br><span style="color:#64748b">HTML reports to Ashley (TN) and Jason (KY) with vacancies, renewals, flags</span></td>
+          <td>Monthly (~5th); MUST follow 7B</td>
+          <td><span class="badge live">serenity-pm-bookkeeping</span></td>
+          <td><span class="badge live">Defined</span></td>
+          <td><a href="https://docs.google.com/spreadsheets/d/1AjZ7hhLa8WHZr-3aMSFHDUSEw0Va4IheI-lLLfmuK3I/edit" target="_blank">KY Tracker Sheet</a></td>
+          <td><span class="badge live">Live</span></td>
+        </tr>
+        <tr>
+          <td>14</td>
+          <td><strong>Utility Reconciliation &amp; Entry</strong><br><span style="color:#64748b">Reconcile WF-1855 charges, enter Buildium bills, flag narratives before draws. All portfolios: BXSCI96 KY/TN, PPTCLEX, Radhe NY</span></td>
+          <td>When bills arrive (target: same month paid)</td>
+          <td><span class="badge live">serenity-utility</span></td>
+          <td><span class="badge live">Defined</span></td>
+          <td><span class="badge none">None</span></td>
+          <td><span class="badge live">Live</span></td>
+        </tr>
+        <tr>
+          <td>15</td>
+          <td><strong>Vendor Bill Entry</strong><br><span style="color:#64748b">Scan Gmail for vendor invoices (Ashley TN forwards, Lawn In Order, Cody Beeler) → enter open bills in Buildium per property/owner</span></td>
+          <td>As invoices arrive (weekly scan)</td>
+          <td><span class="badge live">serenity-vendor-bills</span></td>
+          <td><span class="badge live">Defined</span></td>
+          <td><span class="badge none">None</span></td>
+          <td><span class="badge live">Live</span></td>
+        </tr>
+        <tr>
+          <td>—</td>
+          <td><strong>KFB Insurance &amp; Annual Expense Reserves</strong><br><span style="color:#64748b">Identify large recurring expenses (insurance, property tax) via ledger scan; ramp reserve 2–4 months before due; release after payment</span></td>
+          <td>One-time audit + monthly ramp check</td>
+          <td><span class="badge live">serenity-reserve-management</span></td>
+          <td><span class="badge live">Defined</span></td>
+          <td><span class="badge none">None</span></td>
+          <td><span class="badge live">Live</span></td>
+        </tr>
+        <tr>
+          <td>—</td>
+          <td><strong>Reserve Management</strong><br><span style="color:#64748b">Monthly Buildium Banking Details update; owner narrative entry; Amit email + calendar reminder when tax ramp completes</span></td>
+          <td>Monthly + as expenses occur</td>
+          <td><span class="badge live">serenity-reserve-management</span></td>
+          <td><span class="badge live">Defined</span></td>
+          <td><span class="badge none">None</span></td>
+          <td><span class="badge live">Live</span></td>
+        </tr>
+        <tr>
+          <td>—</td>
+          <td><strong>Property Tax Bill Fetch</strong><br><span style="color:#64748b">Annual fall run: navigate Franklin KY, Fayette KY, Scott KY, Davidson TN, Robertson TN portals; pull actual bill amounts for all 17 properties; compare to reserve estimates; flag KY early-payment discount windows (Franklin 2% Nov 30, Fayette 2% Nov 1); flag CC payment arbitrage for TN properties; send Amit consolidated email with portal links + ACH instructions</span></td>
+          <td>Annual (Oct–Nov)</td>
+          <td><span class="badge live">serenity-reserve-management</span></td>
+          <td><span class="badge live">Defined</span></td>
+          <td><span class="badge none">None</span></td>
+          <td><span class="badge live">Live</span></td>
+        </tr>
+        <tr>
+          <td>—</td>
+          <td><strong>NSF / Returned Payment Processing</strong><br><span style="color:#64748b">Gmail NSF alert → read tenant/amount/date → post $35 (TN) or $55 (KY) charge on Buildium ledger with lease clause note</span></td>
+          <td>On event (Buildium email notification)</td>
+          <td><span class="badge live">serenity-nsf</span></td>
+          <td><span class="badge live">Defined</span></td>
+          <td><span class="badge none">None</span></td>
+          <td><span class="badge live">Live</span></td>
+        </tr>
+        <tr>
+          <td>—</td>
+          <td><strong>LHA / KHC Reconciliation (PPTCLEX)</strong><br><span style="color:#64748b">LHA portal → Park Community bank → Buildium 3-way match. KHC $751/mo fixed → WF.</span></td>
+          <td>Monthly (before PPTCLEX narrative)</td>
+          <td><span class="badge live">serenity-lha-reconcile</span></td>
+          <td><span class="badge live">Defined</span></td>
+          <td><span class="badge none">None</span></td>
+          <td><span class="badge live">Live</span></td>
+        </tr>
+        <tr>
+          <td>1</td>
+          <td><strong>Management Fees Calculation</strong><br><span style="color:#64748b">Pull Buildium fees → enter into spreadsheet → calculate Ashley/Jason/Radhe splits → verify</span></td>
+          <td>~20th of month</td>
+          <td><span class="badge live">serenity-pm-bookkeeping</span></td>
+          <td><span class="badge live">13-step SOP</span></td>
+          <td><a href="https://docs.google.com/spreadsheets/d/1LLOq6xONpLKR2R8mKPHNq3gxdUjLwlIGpVvRmLzIp14" target="_blank">Mgmt Fee Sheet</a></td>
+          <td><span class="badge live">Live</span></td>
+        </tr>
+        <tr>
+          <td>2</td>
+          <td><strong>Buildium Invoice Processing</strong><br><span style="color:#64748b">Download monthly bill → allocate Growth Plan / EFT / screening / CC fees across 3 parties</span></td>
+          <td>Monthly</td>
+          <td><span class="badge live">serenity-pm-bookkeeping</span></td>
+          <td><span class="badge live">Defined</span></td>
+          <td><a href="https://docs.google.com/spreadsheets/d/1LLOq6xONpLKR2R8mKPHNq3gxdUjLwlIGpVvRmLzIp14" target="_blank">Mgmt Fee Sheet</a></td>
+          <td><span class="badge live">Live</span></td>
+        </tr>
+        <tr>
+          <td>6A</td>
+          <td><strong>Pre-Payout Confirmation Emails</strong><br><span style="color:#64748b">Send income breakdown to Ashley, Jason, and self (Radhe) → collect 3 confirmations before proceeding</span></td>
+          <td>~20th (before payout)</td>
+          <td><span class="badge live">serenity-pm-bookkeeping</span></td>
+          <td><span class="badge live">Templates defined</span></td>
+          <td><span class="badge none">None</span></td>
+          <td><span class="badge live">Live</span></td>
+        </tr>
+        <tr>
+          <td>6</td>
+          <td><strong>Pay Out Management Income</strong><br><span style="color:#64748b">After all 3 confirmations received → process EFT payouts to AshNash, XJM, Radhe</span></td>
+          <td>~20th (after 6A replies)</td>
+          <td><span class="badge live">serenity-pm-bookkeeping</span></td>
+          <td><span class="badge live">Defined</span></td>
+          <td><span class="badge none">None</span></td>
+          <td><span class="badge finetuning">Fine-Tuning</span></td>
+        </tr>
+        <tr>
+          <td>3</td>
+          <td><strong>Generate Rental Owner Statements (ROS)</strong><br><span style="color:#64748b">Pull statement for each of 16 owner groups from Buildium → present to Amit before sending</span></td>
+          <td>~12th of month</td>
+          <td><span class="badge live">serenity-pm-bookkeeping</span></td>
+          <td><span class="badge live">Defined</span></td>
+          <td><span class="badge none">None</span></td>
+          <td><span class="badge live">Live</span></td>
+        </tr>
+        <tr>
+          <td>5</td>
+          <td><strong>Owner Draws</strong><br><span style="color:#64748b">Calculate EFT draw for each owner from "Available for payment" → Amit approval → submit</span></td>
+          <td>~12th of month</td>
+          <td><span class="badge live">serenity-pm-bookkeeping</span></td>
+          <td><span class="badge live">Defined</span></td>
+          <td><span class="badge none">None</span></td>
+          <td><span class="badge finetuning">Fine-Tuning</span></td>
+        </tr>
+        <tr>
+          <td>4</td>
+          <td><strong>Owner Narrative Emails</strong><br><span style="color:#64748b">Rolling t+5 biz days after draw: draft HTML narrative per owner with news, vacancies, expenses, draw amount</span></td>
+          <td>Rolling (t+5 after each draw)</td>
+          <td><span class="badge live">serenity-pm-bookkeeping</span></td>
+          <td><span class="badge live">Full template</span></td>
+          <td><a href="https://docs.google.com/document/d/1ISW4AgrDmQkunk6sEK7dbvScJ7TFGdSdRf79CMin86g" target="_blank">Owner Narratives Doc</a></td>
+          <td><span class="badge finetuning">Fine-Tuning</span></td>
+        </tr>
+        <tr>
+          <td>7</td>
+          <td><strong>Bank Reconciliation</strong><br><span style="color:#64748b">Match Buildium transactions to WF-1855, BofA-0898, WF-9646, WF-2180961985, PC-3049 — 5 accounts total</span></td>
+          <td>End of month</td>
+          <td><span class="badge live">serenity-bank-rec</span></td>
+          <td><span class="badge live">Defined</span></td>
+          <td><span class="badge none">None</span></td>
+          <td><span class="badge live">Live</span></td>
+        </tr>
+        <tr>
+          <td>—</td>
+          <td><strong>Year-End — 1099s &amp; Cash Flow Statements</strong><br><span style="color:#64748b">Generate &amp; e-file 1099-MISCs via Buildium for XJM, AshNash, and vendors ≥$500; generate annual Cash Flow Statements for all owner portfolios; send year-end financial packages by email. Dec prep: verify exempt flags, collect missing W-9s, coordinate PM holiday gifts (Amazon GC, split by unit count).</span></td>
+          <td>December (prep) + January 22 (execution)</td>
+          <td><span class="badge live">serenity-year-end</span></td>
+          <td><span class="badge live">Defined</span></td>
+          <td><span class="badge none">None</span></td>
+          <td><span class="badge live">Live</span></td>
+        </tr>
+      </tbody>
+    </table>
+
+    <div style="margin-top:8px;font-size:11px;color:#64748b">
+      <strong>Status key:</strong>
+      <span class="badge live">Live</span> = running in production &nbsp;
+      <span class="badge finetuning">Fine-Tuning</span> = defined, Amit approval required before going live &nbsp;
+      <span class="badge partial">Partial</span> = SOP exists, skill embedded but not dedicated &nbsp;
+      <span class="badge open">Needs Skill</span> = undocumented, no automation
+    </div>
+  </section>
+
+  <!-- SWIM LANES -->
+  <a id="swimlanes"></a>
+  <section>
+    <h2>Monthly Workflow — Swim Lanes</h2>
+    <p style="font-size:11px;color:#64748b;margin-bottom:12px">Columns = process stages in chronological order. Rows = who is responsible. Color = automation level.</p>
+    <div class="swimlane-wrap">
+      <table class="sl-table">
+        <thead>
+          <tr>
+            <th class="sl-lane-hdr" style="background:#1a2332;color:#7eb3f0;font-size:10px">LANE</th>
+            <td class="sl-phase" colspan="2">Week 1 (~1st–7th)</td>
+            <td class="sl-phase" colspan="3">Week 2 (~8th–14th)</td>
+            <td class="sl-phase" colspan="4">Week 3 (~15th–21st)</td>
+            <td class="sl-phase" colspan="2">Week 4 (~22nd–31st)</td>
+          </tr>
+          <tr>
+            <th class="sl-lane-hdr" style="background:#243447;color:#9ab0c4;font-size:9px">PARTICIPANT</th>
+            <td class="sl-col-hdr">Comms Review #1</td>
+            <td class="sl-col-hdr">Vacancy Report</td>
+            <td class="sl-col-hdr">Comms Review #2</td>
+            <td class="sl-col-hdr">Owner Statements</td>
+            <td class="sl-col-hdr">Owner Draws</td>
+            <td class="sl-col-hdr">Mgmt Fees Calc</td>
+            <td class="sl-col-hdr">Payout Emails (6A)</td>
+            <td class="sl-col-hdr">Payout Processing</td>
+            <td class="sl-col-hdr">Comms Review #3</td>
+            <td class="sl-col-hdr">Owner Narratives</td>
+            <td class="sl-col-hdr">Bank Rec</td>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td class="sl-lane-hdr" style="background:#0f4c2e;color:#86efac">🤖 Cowork<br>(Automated)</td>
+            <td class="sl-cell"><span class="sl-step green">Scan Buildium comms → flag vacancies, delinquencies, legal</span></td>
+            <td class="sl-cell"><span class="sl-step green">Generate TN + KY HTML reports → stage as drafts</span></td>
+            <td class="sl-cell"><span class="sl-step green">Mid-month comms scan</span></td>
+            <td class="sl-cell"><span class="sl-step green">Pull ROS for 16 owners from Buildium</span></td>
+            <td class="sl-cell"><span class="sl-step orange">Calculate draw amounts → present for approval</span></td>
+            <td class="sl-cell"><span class="sl-step green">Pull fees from Buildium → populate spreadsheet → calc splits</span></td>
+            <td class="sl-cell"><span class="sl-step green">Draft 3 confirmation emails (Ashley / Jason / Self)</span></td>
+            <td class="sl-cell"><span class="sl-step orange">Process EFT payouts after all 3 confirmations</span></td>
+            <td class="sl-cell"><span class="sl-step green">3rd comms scan</span></td>
+            <td class="sl-cell"><span class="sl-step orange">Draft ON per owner → stage for review</span></td>
+            <td class="sl-cell"><span class="sl-step gray">⚠ Not yet automated</span></td>
+          </tr>
+          <tr>
+            <td class="sl-lane-hdr" style="background:#1e3a5f;color:#93c5fd">👤 Saloni<br>(Bookkeeper)</td>
+            <td class="sl-cell" style="color:#94a3b8;font-size:10px">—</td>
+            <td class="sl-cell" style="color:#94a3b8;font-size:10px">—</td>
+            <td class="sl-cell" style="color:#94a3b8;font-size:10px">Enter utility bills same-month they're paid</td>
+            <td class="sl-cell"><span class="sl-step" style="background:#6366f1;color:#fff">Review ROS → flag issues</span></td>
+            <td class="sl-cell"><span class="sl-step" style="background:#6366f1;color:#fff">Verify draw amounts</span></td>
+            <td class="sl-cell"><span class="sl-step" style="background:#6366f1;color:#fff">Review fee calc → confirm spreadsheet</span></td>
+            <td class="sl-cell" style="color:#94a3b8;font-size:10px">—</td>
+            <td class="sl-cell" style="color:#94a3b8;font-size:10px">—</td>
+            <td class="sl-cell" style="color:#94a3b8;font-size:10px">—</td>
+            <td class="sl-cell"><span class="sl-step" style="background:#6366f1;color:#fff">Review drafted ONs</span></td>
+            <td class="sl-cell"><span class="sl-step" style="background:#6366f1;color:#fff">Manual reconciliation</span></td>
+          </tr>
+          <tr>
+            <td class="sl-lane-hdr" style="background:#3b1f0a;color:#fcd34d">⚡ Amit<br>(Approval Gate)</td>
+            <td class="sl-cell" style="color:#94a3b8;font-size:10px">—</td>
+            <td class="sl-cell"><span class="sl-step orange">Approve → send to Ashley + Jason</span></td>
+            <td class="sl-cell" style="color:#94a3b8;font-size:10px">—</td>
+            <td class="sl-cell"><span class="sl-step orange">Approve ROS before sending</span></td>
+            <td class="sl-cell"><span class="sl-step orange">✅ Approve draw amounts</span></td>
+            <td class="sl-cell"><span class="sl-step orange">Review spreadsheet totals</span></td>
+            <td class="sl-cell"><span class="sl-step orange">Reply "Confirmed" (self-review)</span></td>
+            <td class="sl-cell"><span class="sl-step orange">Confirm all 3 replies received</span></td>
+            <td class="sl-cell" style="color:#94a3b8;font-size:10px">—</td>
+            <td class="sl-cell"><span class="sl-step orange">✅ Approve → send ONs</span></td>
+            <td class="sl-cell"><span class="sl-step orange">Review rec before marking done</span></td>
+          </tr>
+          <tr>
+            <td class="sl-lane-hdr" style="background:#2a1f3d;color:#c4b5fd">🏘 Ashley / Jason<br>(PM Input)</td>
+            <td class="sl-cell" style="color:#94a3b8;font-size:10px">—</td>
+            <td class="sl-cell"><span class="sl-step purple">Receive report → reply with vacancy updates + intents</span></td>
+            <td class="sl-cell" style="color:#94a3b8;font-size:10px">—</td>
+            <td class="sl-cell" style="color:#94a3b8;font-size:10px">—</td>
+            <td class="sl-cell" style="color:#94a3b8;font-size:10px">—</td>
+            <td class="sl-cell" style="color:#94a3b8;font-size:10px">—</td>
+            <td class="sl-cell"><span class="sl-step purple">Reply "Confirmed" to payout email</span></td>
+            <td class="sl-cell" style="color:#94a3b8;font-size:10px">EFT arrives 1–2 days</td>
+            <td class="sl-cell" style="color:#94a3b8;font-size:10px">—</td>
+            <td class="sl-cell" style="color:#94a3b8;font-size:10px">Receive ON</td>
+            <td class="sl-cell" style="color:#94a3b8;font-size:10px">—</td>
+          </tr>
+          <tr>
+            <td class="sl-lane-hdr" style="background:#1a1a2e;color:#a5b4fc">🏦 Buildium<br>(System)</td>
+            <td class="sl-cell"><span class="sl-step" style="background:#334155;color:#e2e8f0">Source: comms, ledgers, rent roll</span></td>
+            <td class="sl-cell"><span class="sl-step" style="background:#334155;color:#e2e8f0">Source: leases, vacancies, units</span></td>
+            <td class="sl-cell"><span class="sl-step" style="background:#334155;color:#e2e8f0">Bills entered (utility, KFB)</span></td>
+            <td class="sl-cell"><span class="sl-step" style="background:#334155;color:#e2e8f0">Source: owner financials</span></td>
+            <td class="sl-cell"><span class="sl-step" style="background:#334155;color:#e2e8f0">Source: "Available for payment"</span></td>
+            <td class="sl-cell"><span class="sl-step" style="background:#334155;color:#e2e8f0">Source: GL, mgmt fee entries</span></td>
+            <td class="sl-cell" style="color:#94a3b8;font-size:10px">—</td>
+            <td class="sl-cell"><span class="sl-step" style="background:#334155;color:#e2e8f0">EFT payouts processed</span></td>
+            <td class="sl-cell"><span class="sl-step" style="background:#334155;color:#e2e8f0">Source: new threads</span></td>
+            <td class="sl-cell" style="color:#94a3b8;font-size:10px">—</td>
+            <td class="sl-cell"><span class="sl-step" style="background:#334155;color:#e2e8f0">Source: transaction ledger</span></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div style="margin-top:12px;font-size:11px;color:#64748b;display:flex;gap:16px;flex-wrap:wrap">
+      <span><span style="background:#22c55e;padding:2px 8px;border-radius:3px;color:#fff;font-size:10px">■</span> Fully automated</span>
+      <span><span style="background:#f59e0b;padding:2px 8px;border-radius:3px;color:#1a2332;font-size:10px">■</span> Automated → Amit approval gate</span>
+      <span><span style="background:#6366f1;padding:2px 8px;border-radius:3px;color:#fff;font-size:10px">■</span> Saloni manual</span>
+      <span><span style="background:#8b5cf6;padding:2px 8px;border-radius:3px;color:#fff;font-size:10px">■</span> PM action required</span>
+      <span><span style="background:#94a3b8;padding:2px 8px;border-radius:3px;color:#fff;font-size:10px">■</span> Not yet built</span>
+    </div>
+
+    <!-- EVENT-TRIGGERED SWIM LANE -->
+    <h3 style="margin-top:20px">Event-Triggered Processes</h3>
+    <div class="swimlane-wrap" style="margin-top:8px">
+      <table class="sl-table">
+        <thead>
+          <tr>
+            <th class="sl-lane-hdr" style="background:#1a2332;color:#7eb3f0;font-size:9px">LANE</th>
+            <td class="sl-col-hdr">Trigger</td>
+            <td class="sl-col-hdr">NSF / Chargeback</td>
+            <td class="sl-col-hdr">KFB Insurance Bill</td>
+            <td class="sl-col-hdr">Reserve Holdback / Release</td>
+            <td class="sl-col-hdr">Commission Clawback</td>
+            <td class="sl-col-hdr">Leasing Commission</td>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td class="sl-lane-hdr" style="background:#0f4c2e;color:#86efac">🤖 Cowork</td>
+            <td class="sl-cell" style="font-size:10px;color:#64748b">Buildium notification / bill arrives / PM report</td>
+            <td class="sl-cell"><span class="sl-step partial" style="background:#3b82f6;color:#fff">Post reversal + NSF fee → flag recovery pending</span></td>
+            <td class="sl-cell"><span class="sl-step gray">⚠ Not built — manual today</span></td>
+            <td class="sl-cell"><span class="sl-step gray">⚠ Not built — manual today</span></td>
+            <td class="sl-cell"><span class="sl-step green">Detect early vacate → flag for Amit review</span></td>
+            <td class="sl-cell"><span class="sl-step green">Detect new placement → verify deposit → add to payout</span></td>
+          </tr>
+          <tr>
+            <td class="sl-lane-hdr" style="background:#3b1f0a;color:#fcd34d">⚡ Amit</td>
+            <td class="sl-cell"><span class="sl-step orange">Approve recovery receipt → confirm NSF fee stays</span></td>
+            <td class="sl-cell"><span class="sl-step orange">Verify bill → approve EFT to Radhe Realty</span></td>
+            <td class="sl-cell"><span class="sl-step orange">Approve holdback amount and release reason</span></td>
+            <td class="sl-cell"><span class="sl-step orange">Decide clawback / exception</span></td>
+            <td class="sl-cell" style="color:#94a3b8;font-size:10px">—</td>
+          </tr>
+          <tr>
+            <td class="sl-lane-hdr" style="background:#1a1a2e;color:#a5b4fc">🏦 Buildium</td>
+            <td class="sl-cell"><span class="sl-step" style="background:#334155;color:#e2e8f0">Auto-charges NSF fee + reversed payment entry</span></td>
+            <td class="sl-cell"><span class="sl-step" style="background:#334155;color:#e2e8f0">Bill entered as Radhe Realty vendor → paid via EFT</span></td>
+            <td class="sl-cell"><span class="sl-step" style="background:#334155;color:#e2e8f0">Reserve line item on owner account</span></td>
+            <td class="sl-cell"><span class="sl-step" style="background:#334155;color:#e2e8f0">Commission netted from payout month</span></td>
+            <td class="sl-cell"><span class="sl-step" style="background:#334155;color:#e2e8f0">Commission added to payout month</span></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <!-- SKILLS ROADMAP -->
+  <a id="skills"></a>
+  <section>
+    <h2>Skills Roadmap</h2>
+    <div class="skill-grid">
+      <div class="skill-card live">
+        <div class="skill-name">serenity-pm-bookkeeping <span class="badge live">Live</span></div>
+        <div class="skill-covers"><strong>Covers:</strong> Tasks 1, 2, 3, 4, 5, 6, 6A, 7B, 8, NSF, LHA/KHC reconciliation, PPTCLEX context, vacancy methodology, commission rules, all email templates<br><strong>SOP depth:</strong> Full 13-step management fee calc, late fee GL methodology, leasing commission eligibility rules, clawback process, pre-payout confirmation templates, 6-month backtest data</div>
+        <div class="skill-status live">✅ Installed — production use</div>
+      </div>
+      <div class="skill-card live">
+        <div class="skill-name">serenity-lha-reconcile <span class="badge live">Live</span></div>
+        <div class="skill-covers"><strong>Covers:</strong> Three-way LHA reconciliation for PPTCLEX — Buildium expected HAP vs. LHA landlord portal remittance vs. Park Community Bank lump-sum deposit; exception flagging (short/missing per tenant); KCHA/Robin Hurst separate check on WF-2180961985; draft summary email to Jason Billy<br><strong>Input:</strong> Park Community Bank ACH deposit, LHA portal (lexington.partnerinhousing.com), Buildium tenant ledgers<br><strong>Eval:</strong> 17/17 with skill vs 11/17 without</div>
+        <div class="skill-status live">✅ Installed — production use</div>
+      </div>
+      <div class="skill-card live">
+        <div class="skill-name">serenity-bank-rec <span class="badge live">Live</span></div>
+        <div class="skill-covers"><strong>Covers:</strong> All 5 accounts — WF-1855 (TN operating) + WF-9646 (KY SD) via Buildium Bank Rec screen; BoA-0898 (TN SD) via Ashley balance vs. Buildium SD Liability report; WF-2180961985 (KY KCHA Robin Hurst $751 confirm); PC-3049 delegates to serenity-lha-reconcile. Run at beginning of month before draws.<br><strong>Output:</strong> Balance summary + outstanding items list per account<br><strong>Eval:</strong> 18/18 with skill vs 3/18 without</div>
+        <div class="skill-status live">✅ Installed — production use</div>
+      </div>
+      <div class="skill-card live">
+        <div class="skill-name">serenity-vacancy-report <span class="badge live">Live</span></div>
+        <div class="skill-covers"><strong>Covers:</strong> Monthly leasing &amp; vacancy report for TN (Ashley) and KY (Jason) — new leases/renewals with commissions (~50% new lease, $200 renewal), current vacancies with days vacant + owner commentary for &gt;21 days, upcoming renewals within 60 days. KY email also updates vacancy Google Sheet.<br><strong>Output:</strong> Separate formatted emails to Ashley (ashleynsmith615@gmail.com) and Jason, CC Amit<br><strong>Eval:</strong> 26/28 with skill vs 10/28 without (2.6x improvement)</div>
+        <div class="skill-status live">✅ Installed — production use</div>
+      </div>
+
+      <div class="skill-card live">
+        <div class="skill-name">serenity-utility <span class="badge live">Live</span></div>
+        <div class="skill-covers"><strong>Covers:</strong> Pull utility charges from WF-1855 bank feed across all portfolios (BXSCI96 KY/TN, PPTCLEX, Radhe NY); match to Property-Utility Directory (full account list baked in); log to Charge Log; enter Buildium bills marked as paid (GL: Utility Expense); block draws until all entries complete; NES turn-on fee workflow for TN vacancies (Ashley → Chase 3687 → reimburse Radhe Realty via Buildium Payable To)<br><strong>Input:</strong> WF-1855 bank feed, Ashley's NES email, serenitypmllc@gmail.com<br><strong>Eval:</strong> 18/19 with skill vs 5/19 without (3.6x improvement)</div>
+        <div class="skill-status live">✅ Installed — production use</div>
+      </div>
+      <div class="skill-card live">
+        <div class="skill-name">serenity-vendor-bills <span class="badge live">Live</span></div>
+        <div class="skill-covers"><strong>Covers:</strong> Scan Gmail for incoming vendor invoices from three sources: (1) Ashley Smith (ashleynsmith615@gmail.com) forwarding TN contractor invoices — plumbing, HVAC, appliance repair, landscaping, tree removal, general repairs; (2) Lawn In Order via Jobber (1030 Drummond Dr + 3033 Vistavalley Ct, twice/month Mar–Nov); (3) Cody Beeler monthly .docx mowing invoice split into per-property bills. All bills entered OPEN — Amit marks paid 2–3×/month from WF-1855. GL: Grounds Maintenance/Landscaping or Repairs &amp; Maintenance by work type.<br><strong>Input:</strong> serenitypmllc@gmail.com, invoice attachments (PDF/.docx)</div>
+        <div class="skill-status live">✅ Installed — production use</div>
+      </div>
+
+      <div class="skill-card" style="border-top-color:#22c55e">
+        <div class="skill-name">serenity-kfb-insurance <span class="badge live">Absorbed</span></div>
+        <div class="skill-covers"><strong>Covered by:</strong> serenity-reserve-management handles KFB insurance as part of the annual reserve ramp (2-month ramp before November billing). serenity-utility handles the NES turn-on fee reimbursement workflow. No standalone skill needed.</div>
+        <div class="skill-status live">✅ Retired — covered by existing skills</div>
+      </div>
+
+      <div class="skill-card live">
+        <div class="skill-name">serenity-reserve-management <span class="badge live">Live</span></div>
+        <div class="skill-covers"><strong>Covers:</strong> Three modes — AUDIT (one-time ledger scan across PPTCLEX, BXSCI96 KY+TN, PPTC, Radhe Realty to identify large annual recurring expenses ≥$1,000 and produce a reserve schedule spreadsheet); MONTHLY (check ramp windows, increase Property Reserve in Buildium via Banking Details, update owner narrative, email Amit + calendar reminder when tax bill is due); and TAX BILL FETCH (annual — navigate Franklin KY, Fayette KY, Scott KY, Davidson TN, Robertson TN county portals to pull actual tax bills, compare to reserves, flag KY early-payment discount windows, and surface CC payment arbitrage opportunities). Tiered ramp: 2mo for $1k–$2k, 3mo for $2k–$4k, 4mo for $4k+. Release reserve to baseline after bill paid.<br><strong>Eval:</strong> 13/15 with skill vs 5/15 without (2.6x improvement) — 5 scenarios / 25 assertions total</div>
+        <div class="skill-status live">✅ Installed — production use</div>
+      </div>
+
+
+      <div class="skill-card live">
+        <div class="skill-name">serenity-website-deploy <span class="badge live">Live</span></div>
+        <div class="skill-covers"><strong>Covers:</strong> Deploys HTML pages from the GitHub repo to serenityrealestatepm.com via cPanel Fileman API (~4–6s). Handles git push via browser JS (VM has no outbound network), Fileman direct upload, and git pipeline fallback. Login flow: sso.godaddy.com → Serenity Real Estate PM → cPanel Admin → grab cpsess token from URL.<br><strong>Pages:</strong> serenityops.html, elmwoodops.html, opsmap.html, pma-directory.html (password-protected)</div>
+        <div class="skill-status live">✅ Installed — production use</div>
+      </div>
+
+      <div class="skill-card live">
+        <div class="skill-name">serenity-year-end <span class="badge live">Live</span></div>
+        <div class="skill-covers"><strong>Covers:</strong> Three phases — GIFTS (early Dec: calculate Amazon GC contributions per owner using unit-count split across BXSCI96/PPTCLEX+PPTC/McLean groups); DECEMBER PREP (mid-Dec: pull YTD vendor payments, flag vendors ≥$500 missing W-9, verify 1099 Exempt flags for Radhe Realty/Jason Billy/Ashley Smith/Serenity PM LLC, send W-9 requests); JANUARY EXECUTION (target Jan 22: generate + e-file 1099s via Buildium for XJM + AshNash + eligible vendors, generate annual Cash Flow Statements, send year-end financial packages by email using standard template). Hard deadline: Buildium e-file Feb 2 12:00pm ET.<br><strong>Eval:</strong> 4 scenarios / 16 assertions</div>
+        <div class="skill-status live">✅ Installed — production use</div>
+      </div>
+
+      <div class="skill-card" style="border-top-color:#15803d">
+        <div class="skill-name">serenity-nsf <span class="badge live">Live</span></div>
+        <div class="skill-covers"><strong>Trigger:</strong> Buildium returned-payment email notification (or Amit says "NSF", "payment bounced", "ACH returned")<br><strong>Flow:</strong> Gmail MCP reads notification → extracts tenant, property, amount, return date, reason code → navigates Buildium tenant ledger → posts NSF fee charge (TN=$35 / KY=$55) with templated note citing lease returned-payment clause<br><strong>Exception handling:</strong> C00 chargeback escalation (does NOT auto-post — flags to Amit), duplicate auto-post detection (flags wrong amount on KY vs TN mismatch), multi-incident accumulation per cycle<br><strong>Covers:</strong> NSF/returned payment processing (event-driven, not monthly)</div>
+        <div class="skill-status" style="color:#15803d">✓ 4 evals written — pending benchmark run</div>
+      </div>
+    <div class="skill-card live">
+      <div class="skill-name">serenity-income-calc <span class="badge live">Live</span></div>
+      <div class="skill-covers">
+        <strong>Covers:</strong> Verify management fee % and PM/Serenity splits across all properties; single-month verification and 6-month backtest against the income spreadsheet<br>
+        <strong>Trigger:</strong> "verify income calculations", "check fee splits", "backtest income", "are the fees right"<br>
+        <strong>Eval:</strong> 2 evals — Mar 2026 single-month (53 properties, 0 errors) + 6-month backtest Oct 2025–Mar 2026 (334 property-months, 0 errors)
+      </div>
+      <div class="skill-status live">✅ Installed — production use</div>
+    </div><div class="skill-card live">
+        <div class="skill-name">serenity-owner-context <span class="badge live">Live</span></div>
+        <div class="skill-covers">
+          <strong>Covers:</strong> Persistent owner intelligence — payment patterns, vacancy flags, reserve trends, monthly history for all 14 owners stored in GitHub (serenity-pm-context).<br>
+          <strong>Modes:</strong> BRIEF (pre-narrative context pull) / COMMIT (post-send profile update + email) / BUILD (bootstrap from Drive narratives).<br>
+          <strong>Trigger:</strong> "pull up owner context", "brief me before drafting", "commit the owner context", "what's going on with [owner]", "vacancy pattern".<br>
+          <strong>Built:</strong> Mar 2026 — 14 profiles seeded from real narratives (Feb+Jan 2026 cycles).
+        </div>
+        <div class="skill-status live">✅ Installed — production use</div></div></div>
+  </section>
+
+  <!-- INPUTS / OUTPUTS -->
+  <a id="io"></a>
+  <section>
+    <h2>Inputs &amp; Outputs — Can Cowork Fetch / Push?</h2>
+
+    <div class="io-wrap">
+      <div class="io-card">
+        <div class="io-hdr">📥 Inputs — Who Provides &amp; Can Cowork Fetch?</div>
+        <div class="io-row"><span class="io-name">Buildium GL / rent roll / ledgers</span><span class="io-src">Buildium (browser) <span class="can-fetch">✅ Cowork fetches</span></span></div>
+        <div class="io-row"><span class="io-name">Ashley reply (vacancy updates)</span><span class="io-src">Gmail inbox <span class="can-fetch">✅ Cowork reads</span></span></div>
+        <div class="io-row"><span class="io-name">Jason reply / KY Tracker Sheet</span><span class="io-src">Gmail + Google Sheets <span class="can-fetch">✅ Cowork reads</span></span></div>
+        <div class="io-row"><span class="io-name">Saloni confirmation / data</span><span class="io-src">Gmail inbox <span class="can-fetch">✅ Cowork reads</span></span></div>
+        <div class="io-row"><span class="io-name">Utility invoices (Columbia Gas, etc.)</span><span class="io-src">Email PDF attachments <span class="can-fetch">✅ Cowork reads email</span></span></div>
+        <div class="io-row"><span class="io-name">KFB insurance invoices</span><span class="io-src">Email / mail PDF <span class="cannot-fetch">⚠ Manual upload needed</span></span></div>
+        <div class="io-row"><span class="io-name">LHA portal payment data</span><span class="io-src">lexington.partnerinhousing.com <span class="can-fetch">✅ Cowork navigates</span></span></div>
+        <div class="io-row"><span class="io-name">Bank statements (WF / BofA)</span><span class="io-src">Online banking <span class="cannot-fetch">⚠ Manual download + upload</span></span></div>
+        <div class="io-row"><span class="io-name">Mgmt Fee spreadsheet</span><span class="io-src">Google Sheets (Drive) <span class="can-fetch">✅ Cowork reads/writes</span></span></div>
+        <div class="io-row"><span class="io-name">Buildium invoice PDF</span><span class="io-src">Buildium → Accounting → Bills <span class="can-fetch">✅ Cowork navigates</span></span></div>
+        <div class="io-row"><span class="io-name">Owner Narratives tracking doc</span><span class="io-src">Google Docs <span class="can-fetch">✅ Cowork reads/writes</span></span></div>
+        <div class="io-row"><span class="io-name">Market news (TN/KY)</span><span class="io-src">Web search <span class="can-fetch">✅ Cowork searches</span></span></div>
+      </div>
+
+      <div class="io-card">
+        <div class="io-hdr">📤 Outputs — Where They Go &amp; Can Cowork Push?</div>
+        <div class="io-row"><span class="io-name">Payout confirmation emails (Ashley / Jason / Self)</span><span class="io-src">Gmail drafts → send <span class="can-fetch">✅ Cowork drafts; Amit sends</span></span></div>
+        <div class="io-row"><span class="io-name">Owner narrative emails (16 owners)</span><span class="io-src">Gmail drafts → Amit approves → send <span class="can-fetch">✅ Cowork drafts; Amit approves</span></span></div>
+        <div class="io-row"><span class="io-name">Vacancy / Lease reports (HTML email)</span><span class="io-src">Gmail drafts to Ashley + Jason <span class="can-fetch">✅ Cowork generates + drafts</span></span></div>
+        <div class="io-row"><span class="io-name">Management fee payout (EFT — Ashley / Jason / Radhe)</span><span class="io-src">Buildium → EFT → bank accounts <span class="cannot-fetch">⚠ Amit approves + confirms in chat</span></span></div>
+        <div class="io-row"><span class="io-name">Owner draw EFT</span><span class="io-src">Buildium → EFT → owner banks <span class="cannot-fetch">⚠ Amit approves + confirms in chat</span></span></div>
+        <div class="io-row"><span class="io-name">Mgmt Fee spreadsheet (updated)</span><span class="io-src">Google Sheets <span class="can-fetch">✅ Cowork writes</span></span></div>
+        <div class="io-row"><span class="io-name">Rental owner statements (16 PDFs)</span><span class="io-src">Buildium → download <span class="can-fetch">✅ Cowork pulls</span></span></div>
+        <div class="io-row"><span class="io-name">NSF charge on tenant ledger</span><span class="io-src">Buildium (Enter charge) <span class="can-fetch">✅ Cowork enters</span></span></div>
+        <div class="io-row"><span class="io-name">Chargeback recovery payment receipt</span><span class="io-src">Buildium (Receive payment) <span class="can-fetch">✅ Cowork enters</span></span></div>
+        <div class="io-row"><span class="io-name">Bank reconciliation report</span><span class="io-src">Buildium → mark reconciled <span class="cannot-fetch">⚠ Skill not yet built</span></span></div>
+        <div class="io-row"><span class="io-name">Utility bills in Buildium</span><span class="io-src">Buildium → Accounting → Bills <span class="cannot-fetch">⚠ Skill not yet built</span></span></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- WORK EFFORT -->
+  <a id="effort"></a>
+  <section>
+    <h2>Work Effort — Manual vs. Automated</h2>
+    <table>
+      <thead>
+        <tr>
+          <th>Process</th>
+          <th>Manual (hrs/mo)</th>
+          <th>Automated Target</th>
+          <th>Time Saved</th>
+          <th>Effort Visualization</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>Management Fees Calculation</td>
+          <td>2.5 hrs</td>
+          <td>30 min</td>
+          <td>~2 hrs</td>
+          <td>
+            <div style="font-size:9px;color:#64748b">Manual</div>
+            <div class="effort-bar-wrap"><div class="effort-bar" style="width:100%"></div></div>
+            <div style="font-size:9px;color:#64748b;margin-top:2px">Automated</div>
+            <div class="effort-bar-wrap"><div class="effort-bar after" style="width:20%"></div></div>
+          </td>
+        </tr>
+        <tr>
+          <td>Vacancy &amp; Lease Report (TN + KY)</td>
+          <td>2.5 hrs</td>
+          <td>45 min</td>
+          <td>~1.75 hrs</td>
+          <td>
+            <div class="effort-bar-wrap"><div class="effort-bar" style="width:100%"></div></div>
+            <div class="effort-bar-wrap"><div class="effort-bar after" style="width:30%"></div></div>
+          </td>
+        </tr>
+        <tr>
+          <td>Owner Narratives (16 owners)</td>
+          <td>4 hrs</td>
+          <td>45 min</td>
+          <td>~3.25 hrs</td>
+          <td>
+            <div class="effort-bar-wrap"><div class="effort-bar" style="width:100%"></div></div>
+            <div class="effort-bar-wrap"><div class="effort-bar after" style="width:19%"></div></div>
+          </td>
+        </tr>
+        <tr>
+          <td>Pre-Payout Emails (6A)</td>
+          <td>1 hr</td>
+          <td>10 min</td>
+          <td>~50 min</td>
+          <td>
+            <div class="effort-bar-wrap"><div class="effort-bar" style="width:40%"></div></div>
+            <div class="effort-bar-wrap"><div class="effort-bar after" style="width:7%"></div></div>
+          </td>
+        </tr>
+        <tr>
+          <td>Owner Draws (16 owners)</td>
+          <td>1 hr</td>
+          <td>15 min</td>
+          <td>~45 min</td>
+          <td>
+            <div class="effort-bar-wrap"><div class="effort-bar" style="width:40%"></div></div>
+            <div class="effort-bar-wrap"><div class="effort-bar after" style="width:10%"></div></div>
+          </td>
+        </tr>
+        <tr>
+          <td>Generate Rental Owner Statements</td>
+          <td>1.5 hrs</td>
+          <td>15 min</td>
+          <td>~1.25 hrs</td>
+          <td>
+            <div class="effort-bar-wrap"><div class="effort-bar" style="width:60%"></div></div>
+            <div class="effort-bar-wrap"><div class="effort-bar after" style="width:10%"></div></div>
+          </td>
+        </tr>
+        <tr>
+          <td>Communications Review (3× / mo)</td>
+          <td>1 hr</td>
+          <td>15 min</td>
+          <td>~45 min</td>
+          <td>
+            <div class="effort-bar-wrap"><div class="effort-bar" style="width:40%"></div></div>
+            <div class="effort-bar-wrap"><div class="effort-bar after" style="width:10%"></div></div>
+          </td>
+        </tr>
+        <tr>
+          <td>Bank Reconciliation (4 accounts)</td>
+          <td>1.5 hrs</td>
+          <td>30 min (after skill built)</td>
+          <td>~1 hr</td>
+          <td>
+            <div class="effort-bar-wrap"><div class="effort-bar" style="width:60%"></div></div>
+            <div class="effort-bar-wrap"><div class="effort-bar" style="width:20%;background:#f59e0b"></div></div>
+          </td>
+        </tr>
+        <tr>
+          <td>Utility Bill Entry</td>
+          <td>45 min</td>
+          <td>10 min (after skill built)</td>
+          <td>~35 min</td>
+          <td>
+            <div class="effort-bar-wrap"><div class="effort-bar" style="width:30%"></div></div>
+            <div class="effort-bar-wrap"><div class="effort-bar" style="width:7%;background:#f59e0b"></div></div>
+          </td>
+        </tr>
+        <tr>
+          <td>KFB Insurance + Reserve Mgmt</td>
+          <td>45 min</td>
+          <td>10 min (after skill built)</td>
+          <td>~35 min</td>
+          <td>
+            <div class="effort-bar-wrap"><div class="effort-bar" style="width:30%"></div></div>
+            <div class="effort-bar-wrap"><div class="effort-bar" style="width:7%;background:#f59e0b"></div></div>
+          </td>
+        </tr>
+        <tr>
+          <td>NSF / Chargeback (per incident)</td>
+          <td>30 min/event</td>
+          <td>10 min/event</td>
+          <td>~20 min/event</td>
+          <td>
+            <div class="effort-bar-wrap"><div class="effort-bar" style="width:50%"></div></div>
+            <div class="effort-bar-wrap"><div class="effort-bar after" style="width:17%"></div></div>
+          </td>
+        </tr>
+        <tr style="background:#f8fafc;font-weight:700">
+          <td><strong>TOTAL (monthly)</strong></td>
+          <td><strong>~17–18 hrs</strong></td>
+          <td><strong>~3–4 hrs</strong></td>
+          <td><strong>~14 hrs saved</strong></td>
+          <td>
+            <div style="font-size:10px;color:#15803d;font-weight:700">77% reduction in manual effort when all skills built</div>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+    <p style="font-size:11px;color:#64748b;margin-top:6px">Note: Orange bars = skill not yet built (effort reduction pending). Green bars = skill live today.</p>
+  </section>
+
+  <!-- GAPS & BLIND SPOTS -->
+  <a id="gaps"></a>
+  <!-- OWNER & PORTFOLIO DIRECTORY -->
+  <a id="owners"></a>
+  <section>
+    <h2>Owner &amp; Portfolio Directory</h2>
+    <table>
+      <thead>
+        <tr>
+          <th>Group</th>
+          <th>Entity</th>
+          <th>State</th>
+          <th>Units</th>
+          <th>PM</th>
+          <th>Key Properties</th>
+          <th>Draw Account</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><strong>AshNash</strong></td>
+          <td>Various TN entities</td>
+          <td>TN</td>
+          <td>75</td>
+          <td>Ashley Smith</td>
+          <td>Nashville, Murfreesboro area</td>
+          <td>EFT via Buildium</td>
+        </tr>
+        <tr>
+          <td><strong>XJM</strong></td>
+          <td>PPTCLEX LLC</td>
+          <td>KY</td>
+          <td>~30</td>
+          <td>Jason Billy</td>
+          <td>1844 Augusta Dr, 1854 Augusta Dr, 122 Rolling Acres (Frankfort/Lexington)</td>
+          <td>Park Community Bank + Wells Fargo ⚠</td>
+        </tr>
+        <tr>
+          <td><strong>XJM</strong></td>
+          <td>BXSCI96 Realty Holdings LLC</td>
+          <td>KY</td>
+          <td>~16</td>
+          <td>Jason Billy</td>
+          <td>185/193 Landings Dr, 201 S Broadway, 321 Given Ave</td>
+          <td>Buildium EFT</td>
+        </tr>
+        <tr>
+          <td><strong>Radhe</strong></td>
+          <td>Radhe Realty</td>
+          <td>NY / TN</td>
+          <td>Varies</td>
+          <td>Ashley Smith</td>
+          <td>5217 Skillman Ave (Woodside NY), Nashville area</td>
+          <td>Buildium EFT</td>
+        </tr>
+        <tr>
+          <td><strong>PPTC</strong></td>
+          <td>PPTC LLC</td>
+          <td>TN</td>
+          <td>~10</td>
+          <td>Ashley Smith</td>
+          <td>1030 Drummond Dr, 1507 Golf St, 3033 Vista Valley Ct, 3202/3204 Doak Ave, 3901 Kingswood Ave</td>
+          <td>Buildium EFT</td>
+        </tr>
+        <tr>
+          <td><strong>Other TN</strong></td>
+          <td style="font-size:10px;color:#64748b">ElePepe Solutions, McLean Properties, Ashleigh Suarez, Jessica Wright, Samuel &amp; Anabel Garner, Hankton Enterprise, Laura Donnell, Grace &amp; Stephanie Derderian, David &amp; Julie Smith, Elizabeth Burrows, Matt &amp; Elise Albertolle, Nicholas Anastasakos</td>
+          <td>TN</td>
+          <td>Varies</td>
+          <td>Ashley Smith</td>
+          <td>Various</td>
+          <td>Buildium EFT</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <div style="margin-top:16px">
+      <div class="gap-card red" style="margin-bottom:8px">
+        <div class="gap-title">⚠️ PPTCLEX — Two Bank Accounts (Critical)</div>
+        <div class="gap-body">PPTCLEX LLC uses <strong>both Park Community Bank and Wells Fargo</strong>. Always ask Amit for current balances before finalizing the PPTCLEX owner narrative or draw. Never assume account balance from Buildium alone. LHA/Section 8 deposits land in Park Community; operating cash flows through Wells Fargo.</div>
+      </div>
+      <div class="gap-card" style="background:#fefce8;border-left-color:#ca8a04;margin-bottom:8px">
+        <div class="gap-title">📋 PPTCLEX — LHA / Section 8 Timing</div>
+        <div class="gap-body">PPTCLEX receives housing authority payments monthly via Park Community Bank. Run <strong>serenity-lha-reconcile</strong> before calculating PPTCLEX owner draw. Timing of the lump-sum deposit varies by month — do not assume it has arrived before confirming in bank.</div>
+      </div>
+      <div class="gap-card" style="background:#fefce8;border-left-color:#ca8a04;margin-bottom:8px">
+        <div class="gap-title">🕐 KY Chronic Late Payers</div>
+        <div class="gap-body">Many KY tenants (PPTCLEX and BXSCI96) pay late. Wait until the <strong>18th–20th of the month</strong> before pulling KY rent rolls for management fee calc or narratives. Early pulls will understate income and produce an incomplete picture for Jason.</div>
+      </div>
+      <div class="gap-card" style="background:#f0fdf4;border-left-color:#16a34a">
+        <div class="gap-title">🔌 BXSCI96 Utility Tracking</div>
+        <div class="gap-body">BXSCI96 KY properties have owner-paid utilities that are bundled into tenant rent. Track separately each month via <strong>serenity-utility</strong>. Include in monthly utility reconciliation run before BXSCI96 draw is processed.</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- GAPS -->
+  <a id="gaps"></a>
+  <section>
+    <h2>What Else to Consider — Gaps &amp; Blind Spots</h2>
+
+    <div class="gap-card red">
+      <div class="gap-title">🔴 Utility Bill Timing Rule — Process Gap (Confirmed)</div>
+      <div class="gap-body">Bills paid in February but entered 3/7/26 caused the PPTCLEX $6,939.16 shortfall. There is no enforced rule today requiring same-month entry. A serenity-utility skill should include a hard warning when a bill's payment date is in a prior month. Consider a standing reminder to Saloni at the end of each month: "Have all bills paid this month been entered in Buildium?"</div>
+    </div>
+
+    <div class="gap-card red">
+      <div class="gap-title">🔴 Reserve Budget Not Formalized</div>
+      <div class="gap-body">The HVAC reserve was only $1,000 against a $2,800 actual cost — a $1,800 gap. There is no written reserve schedule per property per expense category. A reserve model should be built (HVAC replacement cost ÷ expected life = monthly holdback) and tracked in a spreadsheet. This is especially critical for aging multi-family units at 1844/1854 Augusta.</div>
+    </div>
+
+    <div class="gap-card">
+      <div class="gap-title">🟠 Vacancy Impact Not Being Reported to Owners in Real-Time</div>
+      <div class="gap-body">The PPTCLEX $5,302 income drop from 4 vacant units is an ongoing structural drag, not a one-time event. Currently owners only hear about this in the monthly narrative. Consider a mid-month vacancy alert to PPTCLEX LLC when vacancy income shortfall is expected to exceed $1,000.</div>
+    </div>
+
+    <div class="gap-card">
+      <div class="gap-title">🟠 Security Deposit Accounting — Not Automated</div>
+      <div class="gap-body">Two SD accounts (BofA-0898 TN, WF-9646 KY) hold tenant security deposits. There is no automated reconciliation of deposit held vs. deposits in Buildium. Move-out settlement and SD disposition process is fully manual with no documented SOP or skill.</div>
+    </div>
+
+    <div class="gap-card">
+      <div class="gap-title">🟠 No Tenant Communication Templates for NSF / Late Notices</div>
+      <div class="gap-body">When a payment bounces, there's no standardized tenant-facing communication template for the NSF notice. This risks inconsistent messaging and could have legal implications (state notice requirements differ between TN and KY). A template library for common tenant events (NSF notice, late rent notice, lease renewal offer, move-out instructions) should be documented.</div>
+    </div>
+
+    <div class="gap-card" style="background:#f0fdf4;border-left-color:#16a34a">
+      <div class="gap-title">✅ Year-End Process — Covered by serenity-year-end</div>
+      <div class="gap-body">1099 generation, annual Cash Flow Statements, vendor W-9 collection, and PM holiday gift coordination are now documented and automated via <strong>serenity-year-end</strong>. KFB insurance renewal tracking is handled via serenity-reserve-management.</div>
+    </div>
+
+    <div class="gap-card blue">
+      <div class="gap-title">🔵 Leasing Commission Clawback Tracking — No Spreadsheet</div>
+      <div class="gap-body">The SKILL.md defines the clawback rule (tenant must complete lease term) but there is no persistent tracker that flags placements within the last 12 months and checks whether those tenants are still in place. Today this relies on memory. A simple spreadsheet tab in the Mgmt Fee sheet with placement dates and vacate dates would automate the detection.</div>
+    </div>
+
+    <div class="gap-card blue">
+      <div class="gap-title">🔵 Exception Handling Rules Not Backtested for Serenity PM</div>
+      <div class="gap-body">The Goddard skill has 39 exception handling (EH) rules backtested over 5 months. The serenity-pm-bookkeeping skill has SOPs but no formal EH rule inventory or backtest. Suggest documenting known exception patterns (late fee reversals dominating, zero-draw months, large capital expenses) as named rules in the skill file.</div>
+    </div>
+
+    <div class="gap-card blue">
+      <div class="gap-title">🔵 Owner Narrative — Fine-Tuning Not Yet Completed</div>
+      <div class="gap-body">Owner narratives (Task 4) and owner draws (Task 5) are marked as "fine-tuning" in the skill — meaning they are NEVER to be sent or processed without explicit Amit approval. There is no documented milestone or criteria for when they will move to "live." Setting a target date and completion checklist would help move these forward.</div>
+    </div>
+
+    <div class="gap-card blue">
+      <div class="gap-title">🔵 No Buildium Data Quality Monitor</div>
+      <div class="gap-body">Stale lease records, duplicate vendor entries, and unreconciled tenant balances accumulate over time. There is no periodic data quality check (e.g., leases expired with no renewal entered, tenants with negative balances, duplicate payment entries). A quarterly Buildium audit checklist would prevent these from compounding.</div>
+    </div>
+  </section>
+
+  <div style="text-align:center;font-size:11px;color:#94a3b8;margin-top:24px;padding-top:16px;border-top:1px solid #e2e8f0">
+    Serenity Property Management LLC · Confidential · v1.0 March 2026
+    &nbsp;·&nbsp; <a href="https://serenityrealestatepm.com/elmwoodops.html">Goddard Elmwood Park Ops ↗</a>
+    &nbsp;·&nbsp; <a href="#" onclick="window.scrollTo(0,0);return false">Back to top ↑</a>
+  </div>
+</div>
+
+<script>
+(function() {
+  const d = new Date();
+  const opts = { weekday:'short', month:'short', day:'numeric', year:'numeric' };
+  const el = document.getElementById('live-date');
+  if(el) el.textContent = d.toLocaleDateString('en-US', opts);
+})();
+const navLinks = document.querySelectorAll('.topbar-nav a');
+const sections = document.querySelectorAll('a[id]');
+window.addEventListener('scroll', () => {
+  let current = '';
+  sections.forEach(s => { if(window.scrollY >= s.offsetTop - 80) current = s.id; });
+  navLinks.forEach(a => { a.classList.toggle('active', a.getAttribute('href') === '#' + current); });
+});
+</script>
+
+
+</body><script>'undefined'=== typeof _trfq || (window._trfq = []);'undefined'=== typeof _trfd && (window._trfd=[]),_trfd.push({'tccl.baseHost':'secureserver.net'},{'ap':'cpsh-oh'},{'server':'p3plzcpnl504824'},{'dcenter':'p3'},{'cp_id':'9959745'},{'cp_cl':'8'}) // Monitoring performance to make your website faster. If you want to opt-out, please contact web hosting support.</script><script src='https://img1.wsimg.com/traffic-assets/js/tccl.min.js'></script></html>
