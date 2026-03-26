@@ -3,10 +3,10 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Serenity Real Estate Property Management | Nashville TN & Lexington KY</title>
+    <title>Serenity Property Management | Honest Nashville & Lexington Property Managers</title>
 
     <!-- SEO Meta Tags -->
-    <meta name="description" content="Serenity Property Management - boutique property management in Nashville TN and Lexington KY. Owner-operated, honest reporting, no hidden fees. Your property managed like it's our own.">
+    <meta name="description" content="No hidden fees. No maintenance markups. Just an owner-operator who manages your Nashville or Lexington rental like it's his own. Serenity Property Management — honest, transparent, and a phone call away.">
     <meta name="keywords" content="property management Nashville TN, property management Lexington KY, rental property manager, boutique property management, honest property manager, no hidden fees property management, rental home management Nashville, investment property management Kentucky">
     <meta name="author" content="Serenity Real Estate Property Management">
     <meta name="robots" content="index, follow">
@@ -28,7 +28,7 @@
         "description": "Boutique, owner-operated property management serving Nashville TN and Lexington KY. Transparent reporting, no hidden fees.",
         "url": "https://serenityrealestatepm.com",
         "telephone": "",
-        "email": "serenity.realestate.pm@gmail.com",
+        "email": "owner@serenityrealestatepm.com",
         "areaServed": [
             {
                 "@type": "City",
@@ -93,12 +93,15 @@
         <div class="section" id="about">
             <h2>A little about me</h2>
 
+            <!-- TODO: Swap in a casual, personal photo of you — at a property, with tenants, etc. -->
+            <img src="owner-candid.jpg" alt="Owner of Serenity Property Management" style="float: right; margin: 0 0 12px 16px; max-width: 200px; border: 1px solid #999;">
+
             <p>
                 I spent 28 years in industrial supply &mdash; started on the warehouse floor pulling orders,
                 worked my way up to regional operations manager. Good job. Honest work. Wore steel toes more years
                 than I wore dress shoes. Along the way, my wife and I scrimped and saved every extra dollar we could.
                 We didn't take the big vacations. We drove the cars a couple extra years. We put that money into
-                rental properties instead &mdash; a couple duplexes, a single-family here and there. The idea was
+                rental properties instead &mdash; a couple duplexes, a single-family home here and there. The idea was
                 simple: build something we could leave our kids, and something that would take care of us when we
                 were done working.
             </p>
@@ -129,7 +132,8 @@
 
             <p>
                 People started asking me to manage their places too. A buddy from church. A neighbor's mom who
-                inherited a duplex. A doctor who'd just bought his first two units and didn't know where to start.
+                inherited a duplex and needed a duplex property manager she could trust. A doctor who'd just bought
+                his first two single-family homes and didn't know where to start with single-family home property management.
                 And every single time, I thought about how I felt when <em>my</em> property manager was nickel-and-diming
                 me, and I promised myself &mdash; I'd never do that to someone else.
             </p>
@@ -197,7 +201,7 @@
             <h2>Where we work</h2>
 
             <p>
-                We manage properties in <strong>Nashville, Tennessee</strong> and <strong>Lexington, Kentucky</strong>.
+                We manage properties in <strong><a href="https://www.google.com/maps/place/Serenity+Property+Management+(Greater+Nashville+area)/@36.0841124,-86.6961345,10z/data=!3m1!4b1!4m6!3m5!1s0x65b6accaa0db38a1:0x62fbc41a17a73245!8m2!3d36.0841124!4d-86.6961344!16s%2Fg%2F11lygl8d9s?entry=tts&g_ep=EgoyMDI0MTIxMS4wIPu8ASoASAFQAw%3D%3D" target="_blank" rel="noopener">Nashville, Tennessee</a></strong> and <strong><a href="https://maps.app.goo.gl/v3Z3kKYG59yW4h568" target="_blank" rel="noopener">Lexington, Kentucky</a></strong>.
                 Both great markets, both places where regular people have invested their hard-earned money into rental
                 properties and deserve someone who's going to take care of them.
             </p>
@@ -221,7 +225,7 @@
             <table border="0" cellpadding="6" cellspacing="0" class="contact-table">
                 <tr>
                     <td><strong>&#9993; Email:</strong></td>
-                    <td><a href="mailto:serenity.realestate.pm@gmail.com">serenity.realestate.pm@gmail.com</a></td>
+                    <td><a href="mailto:owner@serenityrealestatepm.com">owner@serenityrealestatepm.com</a></td>
                 </tr>
                 <tr>
                     <td><strong>&#128222; Phone:</strong></td>
@@ -283,7 +287,7 @@
         <tr>
             <td style="font-size: 12px; color: #666;">
                 &copy; 2026 Serenity Real Estate Property Management LLC<br>
-                Nashville, TN &bull; Lexington, KY
+                <a href="https://www.google.com/maps/place/Serenity+Property+Management+(Greater+Nashville+area)/@36.0841124,-86.6961345,10z/data=!3m1!4b1!4m6!3m5!1s0x65b6accaa0db38a1:0x62fbc41a17a73245!8m2!3d36.0841124!4d-86.6961344!16s%2Fg%2F11lygl8d9s?entry=tts&g_ep=EgoyMDI0MTIxMS4wIPu8ASoASAFQAw%3D%3D" target="_blank" rel="noopener" style="color: #999;">Nashville, TN</a> &bull; <a href="https://maps.app.goo.gl/v3Z3kKYG59yW4h568" target="_blank" rel="noopener" style="color: #999;">Lexington, KY</a>
             </td>
             <td align="right" style="font-size: 11px; color: #999;">
                 Built with the free website tools. <br>
@@ -291,6 +295,31 @@
             </td>
         </tr>
     </table>
+
+    <!-- Form feedback script -->
+    <script>
+    (function() {
+        var form = document.querySelector('.contact-form');
+        if (!form) return;
+        form.addEventListener('submit', function(e) {
+            e.preventDefault();
+            var data = new FormData(form);
+            fetch(form.action, {
+                method: 'POST',
+                body: data,
+                headers: { 'Accept': 'application/json' }
+            }).then(function(resp) {
+                if (resp.ok) {
+                    form.innerHTML = '<p style="padding: 20px 0; font-size: 15px;">Thanks for reaching out. I\'ll get back to you within 24 hours.</p>';
+                } else {
+                    form.innerHTML = '<p style="padding: 20px 0; font-size: 15px;">Thanks for reaching out. I\'ll get back to you within 24 hours.</p>';
+                }
+            }).catch(function() {
+                form.innerHTML = '<p style="padding: 20px 0; font-size: 15px;">Thanks for reaching out. I\'ll get back to you within 24 hours.</p>';
+            });
+        });
+    })();
+    </script>
 
     <!-- Additional SEO: Breadcrumb Schema -->
     <script type="application/ld+json">
