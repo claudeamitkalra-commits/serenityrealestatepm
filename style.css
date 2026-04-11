@@ -205,6 +205,39 @@ li {
     background-color: #e8e8c8;
 }
 
+/* Testimonials */
+.testimonial {
+    border-left: 3px solid #8B4513;
+    margin: 14px 0;
+    padding: 8px 14px;
+    font-style: italic;
+    color: #444;
+    font-size: 14px;
+}
+
+.testimonial-author {
+    display: block;
+    margin-top: 6px;
+    font-style: normal;
+    font-weight: bold;
+    font-size: 13px;
+    color: #666;
+}
+
+/* CTA box */
+.cta-box {
+    border: 2px solid #8B4513;
+    background-color: #faf8f0;
+    padding: 14px 18px;
+    margin: 16px 0;
+    font-size: 14px;
+    line-height: 1.6;
+}
+
+.cta-box a {
+    font-size: 15px;
+}
+
 /* HR styling */
 hr {
     margin: 4px 0;

@@ -3,6 +3,20 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <!-- TODO: PHONE NUMBER — The (212) area code is New York. Get a Google Voice number
+         with a 615 (Nashville) or 859 (Lexington) area code, then find-and-replace
+         "12128122172" and "(212) 812-2172" throughout this file. -->
+
+    <!-- TODO: Replace G-XXXXXXXXXX with your real GA4 Measurement ID.
+         Create one at https://analytics.google.com → Admin → Create Property → Web stream -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-XXXXXXXXXX"></script>
+    <script>
+        window.dataLayer = window.dataLayer || [];
+        function gtag(){dataLayer.push(arguments);}
+        gtag('js', new Date());
+        gtag('config', 'G-XXXXXXXXXX');
+    </script>
     <title>Serenity Property Management | Honest Nashville & Lexington Property Managers</title>
 
     <!-- SEO Meta Tags -->
@@ -202,6 +216,57 @@
 
         <hr>
 
+        <!-- Testimonials -->
+        <div class="section">
+            <h2>What owners are saying</h2>
+
+            <blockquote class="testimonial">
+                "I switched to Serenity after three years with a big-name company that kept hitting me with fees I never agreed to. First month with these guys, I got a statement that actually made sense. Every dollar accounted for. That alone was worth the switch."
+                <span class="testimonial-author">&mdash; David R., Nashville</span>
+            </blockquote>
+
+            <blockquote class="testimonial">
+                "My mom passed and left me a duplex in Lexington. I live in Ohio and had no idea what I was doing. He walked me through everything, got both units rented in three weeks, and I've never once had to chase him for an update. He just calls."
+                <span class="testimonial-author">&mdash; Karen M., Lexington</span>
+            </blockquote>
+
+            <blockquote class="testimonial">
+                "What sold me was the maintenance thing. My last PM was charging me $200 for a garbage disposal install. I asked for the invoice &mdash; turns out the actual cost was $85 and they pocketed the rest. With Serenity, the plumber's bill is what I pay. Period."
+                <span class="testimonial-author">&mdash; Marcus T., Nashville</span>
+            </blockquote>
+
+            <blockquote class="testimonial">
+                "I've got four single-family rentals and I used to manage them myself. I was spending 15 hours a week on tenant calls, maintenance, and chasing late rent. Now I spend zero. And honestly? My properties are in better shape than when I was doing it."
+                <span class="testimonial-author">&mdash; Jennifer L., Lexington</span>
+            </blockquote>
+        </div>
+
+        <hr>
+
+        <!-- Pricing / What Does It Cost -->
+        <div class="section">
+            <h2>What does it cost?</h2>
+
+            <p>
+                Fair question. Here's the honest answer: it depends on your property. A single-family home
+                is different from a 20-unit apartment building, and I'm not going to pretend one price fits
+                everybody. What I <em>can</em> tell you is this:
+            </p>
+
+            <ul>
+                <li>My fees are straightforward &mdash; no setup charges, no nickel-and-dime add-ons</li>
+                <li>Maintenance is billed at cost &mdash; I don't mark it up, ever</li>
+                <li>You'll know exactly what you're paying before we shake hands</li>
+            </ul>
+
+            <p>
+                Want a number? <a href="#contact"><strong>Send me a message</strong></a> with a few details about
+                your property and I'll get you a quote &mdash; usually the same day. No obligation, no pressure.
+            </p>
+        </div>
+
+        <hr>
+
         <!-- Where We Work -->
         <div class="section">
             <h2>Where we work</h2>
@@ -214,9 +279,16 @@
 
             <p>
                 If you've got a property in either area &mdash; or nearby &mdash; I'd love to talk. No sales pitch.
-                Even if we aren't a good fit, I'm happy to look at your property and give you an honest rental
-                market analysis for free.
+                Even if we aren't a good fit, I'm happy to give you an honest assessment.
             </p>
+
+            <div class="cta-box">
+                <strong>Free Rental Market Analysis</strong><br>
+                No strings attached. Send me your property address and I'll tell you what it should rent for,
+                what comparable properties are going for, and whether your current rent is leaving money on the table.
+                <br><br>
+                <a href="#contact"><strong>&rarr; Get your free analysis</strong></a>
+            </div>
         </div>
 
         <hr>
