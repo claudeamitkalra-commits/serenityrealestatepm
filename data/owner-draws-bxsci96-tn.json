@@ -1,0 +1,116 @@
+{
+  "captured_at": "2026-04-16T15:45:00-04:00",
+  "captured_by": "serenity-draw-snapshot v1",
+  "month": "2026-04",
+  "owner_id": "bxsci96-tn",
+  "owner_display": "BXSCI96 Realty Holdings LLC (Nashville)",
+  "pm": "ashley",
+  "summary": {
+    "total_available_usd": 7375.38,
+    "prior_draw_usd": 10674.60,
+    "delta_vs_prior_usd": -3299.22,
+    "delta_reason": "$2,607 in bills paid (HVAC $1,525, NES $479, repairs $323, mowing $280) plus $165 rent shortfall at 325 Harris plus management fees and timing adjustments",
+    "property_count": 4,
+    "reserve_held_usd": 975.00,
+    "reserve_note": "203 N Main St window replacement (held since Dec 2025, pending completion)"
+  },
+  "draws": [
+    {
+      "property": "203 N Main Street",
+      "available_usd": 2216.02,
+      "adjusted_cash_balance_usd": 2216.02,
+      "amount_to_pay_usd": 2216.02,
+      "prior_draw_usd": 2216.02,
+      "prior_draw_date": "2026-03-14",
+      "delta_vs_prior_usd": 0.00,
+      "ownership_pct": 100,
+      "status": "pending"
+    },
+    {
+      "property": "2200 Crestline",
+      "available_usd": 2083.80,
+      "adjusted_cash_balance_usd": 2083.80,
+      "amount_to_pay_usd": 2083.80,
+      "prior_draw_usd": 2683.80,
+      "prior_draw_date": "2026-03-14",
+      "delta_vs_prior_usd": -600.00,
+      "ownership_pct": 100,
+      "status": "pending"
+    },
+    {
+      "property": "325 Harris St",
+      "available_usd": 273.66,
+      "adjusted_cash_balance_usd": 273.66,
+      "amount_to_pay_usd": 273.66,
+      "prior_draw_usd": 2353.88,
+      "prior_draw_date": "2026-03-14",
+      "delta_vs_prior_usd": -2080.22,
+      "ownership_pct": 100,
+      "status": "pending"
+    },
+    {
+      "property": "4329 Enchanted Circle",
+      "available_usd": 2801.90,
+      "adjusted_cash_balance_usd": 2801.90,
+      "amount_to_pay_usd": 2801.90,
+      "prior_draw_usd": 3420.90,
+      "prior_draw_date": "2026-03-14",
+      "delta_vs_prior_usd": -619.00,
+      "ownership_pct": 100,
+      "status": "pending",
+      "note": "Front + Rear bundled under single lease; Rear appears vacant in Buildium but is occupied"
+    }
+  ],
+  "serenity_pm_amount_usd": 0.00,
+  "bills_paid_this_window": [
+    {
+      "paid_date": "2026-03-25",
+      "vendor": "Charles (Cody) Beeler",
+      "memo": "Monthly mowing",
+      "ref": "1029",
+      "amount_usd": 100.00,
+      "category": "landscaping"
+    },
+    {
+      "paid_date": "2026-03-25",
+      "vendor": "Charles (Cody) Beeler",
+      "memo": "Monthly mowing",
+      "ref": "1029",
+      "amount_usd": 180.00,
+      "category": "landscaping"
+    },
+    {
+      "paid_date": "2026-04-02",
+      "vendor": "Radhe Realty LLC",
+      "memo": "Brilliant Mechanical \u2014 325 Harris St A \u2014 HVAC flex duct replacement Mar 2026",
+      "ref": "9919",
+      "amount_usd": 1525.00,
+      "category": "hvac"
+    },
+    {
+      "paid_date": "2026-04-08",
+      "vendor": "Todd Stokes",
+      "memo": "Reattached gutter and downspout on back of unit",
+      "ref": "8650",
+      "amount_usd": 150.00,
+      "category": "repair"
+    },
+    {
+      "paid_date": "2026-04-08",
+      "vendor": "Todd Stokes",
+      "memo": "Replaced supply lines under bathroom sink",
+      "ref": "8649",
+      "amount_usd": 172.50,
+      "category": "repair"
+    },
+    {
+      "paid_date": "2026-04-08",
+      "vendor": "NES",
+      "memo": "325 Harris St - NES Acct 7560349052",
+      "ref": "1602613-0061400",
+      "amount_usd": 479.00,
+      "category": "utility"
+    }
+  ],
+  "bills_total_usd": 2606.50
+}
